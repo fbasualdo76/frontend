@@ -243,9 +243,9 @@ const ProductDetailsScreen = () => {
           <Container>
             <Breadcrumb items={breadcrumbItems} />
             <DetailsContent className="grid">
-              <ProductPreview previewImages={product_one.previewImages} product={product} />
+              <ProductPreview previewImages={product.images} product={product} />
               <ProductDetailsWrapper>
-                <h2 className="prod-title">{product.title}</h2>
+                <h2 className="prod-title">{product.title}+"SOY LA PAGINA DE DETALLE"</h2>
                 <div className="flex items-center rating-and-comments flex-wrap">
                   <div className="prod-rating flex items-center">
                     {stars}

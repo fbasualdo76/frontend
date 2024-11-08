@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const AuthLayout = () => {
   return (
+    //PLANTILLA DEL INVITADO
     <PageWrapper>
       <AuthHeader />
       <main>

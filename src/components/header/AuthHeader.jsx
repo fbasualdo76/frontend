@@ -17,6 +17,7 @@ const ButtonGroupWrapper = styled.div`
 
 const AuthHeader = () => {
   return (
+    //CABECERA INVITADO
     <HeaderMainWrapper className="flex items-center">
       <Container>
         <div className="header-wrap flex items-center justify-between">

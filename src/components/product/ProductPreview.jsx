@@ -112,7 +112,7 @@ const ProductPreview = ({ previewImages, product }) => {
         })}
       </div>
       <div className="preview-display">
-        <img src={/*activePreviewImage*/product.imgSource} className="object-fit-cover" alt="" />
+        <img src={activePreviewImage} className="object-fit-cover" alt="" />
       </div>
     </ProductPreviewWrapper>
   );

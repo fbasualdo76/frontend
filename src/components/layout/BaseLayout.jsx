@@ -1,13 +1,15 @@
 import { PageWrapper } from "../../styles/styles";
 import Header from "../header/Header";
+import AuthHeader from "../header/AuthHeader";
 import Footer from "../footer/Footer";
 import Sidebar from "../sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 
 const BaseLayout = () => {
   return (
+    //PLANTILLA DEL LOGUEADO
     <PageWrapper>
-      <Header />
+      <AuthHeader />
       <Sidebar />
       <div
         style={{

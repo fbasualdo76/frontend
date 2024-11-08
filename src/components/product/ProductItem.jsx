@@ -41,7 +41,9 @@ const ProductItem = ({ product }) => {
     <ProductCardWrapper /*key={product.id} to="/product/details"*/key={product.id} to={`/product/details/${product.id}`}>
     
       <div className="product-img">
-        <img className="object-fit-cover" src={product.imgSource} />
+        <img className="object-fit-cover" src={product.images[0].imgSource} />
+        
+
         <button
           type="button"
           className="product-wishlist-icon flex items-center justify-center bg-white"

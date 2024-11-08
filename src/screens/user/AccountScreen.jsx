@@ -80,7 +80,7 @@ const AccountScreen = () => {
                     <Input
                       type="text"
                       className="form-elem-control text-outerspace font-semibold"
-                      value="Richard Doe"
+                      value="Richard Doerrrrrrrrr"
                       readOnly
                     />
                     <button type="button" className="form-control-change-btn">
@@ -99,7 +99,7 @@ const AccountScreen = () => {
                     <Input
                       type="email"
                       className="form-elem-control text-outerspace font-semibold"
-                      value="richard@gmail.com"
+                      value="richard@gmail.commmmmmmmmmmmmmmmmmmmmmmmmmmm"
                       readOnly
                     />
                     <button type="button" className="form-control-change-btn">

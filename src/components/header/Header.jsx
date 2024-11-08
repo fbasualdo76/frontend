@@ -121,6 +121,7 @@ const Header = () => {
   const dispatch = useDispatch();
 
   return (
+    // CABECERA LOGUEADO
     <HeaderMainWrapper className="header flex items-center">
       <Container className="container">
         <div className="header-wrap flex items-center justify-between">
