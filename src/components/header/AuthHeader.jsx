@@ -20,6 +20,7 @@ const AuthHeader = () => {
     //CABECERA INVITADO
     <HeaderMainWrapper className="flex items-center">
       <Container>
+      <div>CABECERA INVITADO</div>
         <div className="header-wrap flex items-center justify-between">
           <SiteBrandWrapper to="/" className="inline-flex">
             <div className="brand-img-wrap flex items-center justify-center">

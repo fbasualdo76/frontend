@@ -2,6 +2,7 @@ import styled from "styled-components";
 import CartItem from "./CartItem";
 import { PropTypes } from "prop-types";
 import { breakpoints } from "../../styles/themes/default";
+import React, { useEffect, useState } from 'react'
 
 const ScrollbarXWrapper = styled.div`
   overflow-x: scroll;
@@ -57,12 +58,13 @@ const CartTableWrapper = styled.table`
   }
 `;
 
-const CartTable = ({ cartItems }) => {
+const CartTable = ({ cartItems, setCartItems}) => {
+
   const CART_TABLE_HEADS = [
     "Product details",
     "Price",
     "Quantity",
-    "Shipping",
+    //"Shipping",
     "Subtotal",
     "Action",
   ];
@@ -75,9 +77,8 @@ const CartTable = ({ cartItems }) => {
             {CART_TABLE_HEADS?.map((column, index) => (
               <th
                 key={index}
-                className={`bg-outerspace text-white font-semibold capitalize text-base ${
-                  index === CART_TABLE_HEADS.length - 1 ? " text-center" : ""
-                }`}
+                className={`bg-outerspace text-white font-semibold capitalize text-base ${index === CART_TABLE_HEADS.length - 1 ? " text-center" : ""
+                  }`}
               >
                 {column}
               </th>
@@ -86,7 +87,12 @@ const CartTable = ({ cartItems }) => {
         </thead>
         <tbody>
           {cartItems.map((cartItem) => {
-            return <CartItem key={cartItem.id} cartItem={cartItem} />;
+            return <CartItem
+              //key={cartItem.id}
+              key={`${cartItem.id}-${cartItem.size}-${cartItem.color}`} //Clave única por ID, talle y color
+              cartItem={cartItem}
+              setCartItems={setCartItems}
+            />
           })}
         </tbody>
       </CartTableWrapper>
@@ -98,4 +104,5 @@ export default CartTable;
 
 CartTable.propTypes = {
   cartItems: PropTypes.array,
+  setCartItems: PropTypes.func.isRequired,
 };

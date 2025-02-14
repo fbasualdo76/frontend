@@ -1,5 +1,5 @@
 import styled from "styled-components";
-//import { products } from "../../data/data";
+import { products } from "../../data/data";
 import ProductItem from "./ProductItem";
 import { PropTypes } from "prop-types";
 import { breakpoints } from "../../styles/themes/default";

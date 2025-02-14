@@ -124,6 +124,7 @@ const Header = () => {
     // CABECERA LOGUEADO
     <HeaderMainWrapper className="header flex items-center">
       <Container className="container">
+        <div>CABECERA LOQUEADO</div>
         <div className="header-wrap flex items-center justify-between">
           <div className="flex items-center">
             <button

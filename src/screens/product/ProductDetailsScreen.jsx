@@ -3,7 +3,6 @@ import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { product_one } from "../../data/data";
 import ProductPreview from "../../components/product/ProductPreview";
-import { Link } from "react-router-dom";
 import { BaseLinkGreen } from "../../styles/button";
 import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
@@ -12,8 +11,8 @@ import ProductSimilar from "../../components/product/ProductSimilar";
 import ProductServices from "../../components/product/ProductServices";
 import React, { useEffect, useState } from 'react'
 import { obtenerDetalleProducto } from '../../components/fetching/products.fetching.js'
-import { useParams } from 'react-router-dom'
-
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { validateSizeAndColor } from "../../utils/helper";
 
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
@@ -51,6 +50,7 @@ const ProductDetailsWrapper = styled.div`
   .rating-and-comments {
     column-gap: 16px;
     margin-bottom: 20px;
+
   }
   .prod-rating {
     column-gap: 10px;
@@ -186,37 +186,37 @@ const ProductColorWrapper = styled.div`
 `;
 
 const ProductDetailsScreen = () => {
-
-
   const { id } = useParams()
   const [loading, setLoading] = useState(true)
   const [product, setProduct] = useState(null)
   const [errorText, setErrorText] = useState('')
 
+  //ESTADOS PARA EL TALLE Y COLOR.
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+
+  const navigate = useNavigate()
 
   useEffect(() => {
-
-    /*verifyToken()
-      .then(result => {//.then es otra forma de resolver promesas. El result es el retorno de la función asíncrona en fetching/auth.fetching.js/verifyToken.
-        //console.log(result)
-        if (!result.status == 200) {
-          navigate('/login')
-        }
-      })*/
-
+    /*--verifyToken()
+      --.then(result => {//.then es otra forma de resolver promesas. El result es el retorno de la función asíncrona en fetching/auth.fetching.js/verifyToken.
+        --//console.log(result)
+        --if (!result.status == 200) {
+          --navigate('/login')
+        --}
+      --})*/
     const fetchData = async () => {
       try {
         const productoObtenido = await obtenerDetalleProducto(id)
         setLoading(false)
         setProduct(productoObtenido)
         setErrorText('')
-      } catch (error) {//4. captura el error que viene el products.fetching y setea el mensaje en el estado de errorText.
-        //console.error('Error al obtener los productos:', error)
+      } catch (error) {//4. captura el error que viene el products.fetching y setea el mensaje en el estado de errorText.        
         setErrorText(error.message)
       }
     }
     fetchData()
-  }, [])
+  }, [/*id*/])
 
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
@@ -236,27 +236,72 @@ const ProductDetailsScreen = () => {
     { label: "Top", link: "" },
   ];
 
+  const agregarAlCarrito = () => {
+    try {
+      //Validamos que se haya seleccionado un talle y color
+      validateSizeAndColor(selectedSize, selectedColor);
+      //Obtener el carrito actual desde localStorage
+      const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      //Verificar si el producto ya está en el carrito con el mismo talle y color
+      const existingProductIndex = cartItems.findIndex(
+        (item) =>
+          item.id === product.id &&
+          item.size === selectedSize &&
+          item.color === selectedColor
+      );
+      if (existingProductIndex !== -1) {
+        //Si el producto ya existe, incrementar la cantidad
+        cartItems[existingProductIndex].quantity += 1;
+      } else {
+        //Si es un producto nuevo, agregarlo al carrito
+        cartItems.push({
+          id: product.id,
+          title: product.title,
+          color: selectedColor,
+          size: selectedSize,
+          price: product.price,
+          quantity: 1,
+          //shipping: 0,
+          imgSource: product.images[0]?.imgSource || "",
+        });
+      }
+      //Guardar el carrito actualizado en localStorage
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      
+      //Agregar un pequeño delay para asegurar que el almacenamiento se complete
+      setTimeout(() => {
+        navigate("/cart");// Redirigir al carrito
+      }, 100);
+    } catch (error) {
+      setErrorText(error.message); // Mostrar mensaje de error si la validación falla
+    }
+  };
+
   return (
     <>
-      {loading ? <h2>CARGANDO ...</h2> :
+      {errorText && <span style={{ color: 'red' }}>{errorText}</span>}{/*si hay error lo muestra aca.*/}
+      {loading ? <h2>CARGANDO PRODUCTO...</h2> :
         <DetailsScreenWrapper>
           <Container>
             <Breadcrumb items={breadcrumbItems} />
             <DetailsContent className="grid">
               <ProductPreview previewImages={product.images} product={product} />
               <ProductDetailsWrapper>
-                <h2 className="prod-title">{product.title}+"SOY LA PAGINA DE DETALLE"</h2>
+                <h2 className="prod-title">{product.title}{product.rating}</h2>
+
+                <h2>PAGINA QUE MUESTRA EL DETALLE DEL PRODUCTO "ProductPreview", ENTRE OTROS COMPONENTES.</h2>
+
                 <div className="flex items-center rating-and-comments flex-wrap">
                   <div className="prod-rating flex items-center">
                     {stars}
-                    <span className="text-gray text-xs">{product_one.rating}</span>
+                    <span className="text-gray text-xs">{product.rating}</span>
                   </div>
                   <div className="prod-comments flex items-start">
                     <span className="prod-comment-icon text-gray">
                       <i className="bi bi-chat-left-text"></i>
                     </span>
                     <span className="prod-comment-text text-sm text-gray">
-                      {product_one.comments_count} comment(s)
+                      {product.comments_count} comment(s)
                     </span>
                   </div>
                 </div>
@@ -271,9 +316,15 @@ const ProductDetailsScreen = () => {
                     </Link>
                   </div>
                   <div className="prod-size-list flex items-center">
-                    {product_one.sizes.map((size, index) => (
+                    {product.sizes.map((size, index) => (
                       <div className="prod-size-item" key={index}>
-                        <input type="radio" name="size" />
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size}
+                          checked={selectedSize === size}
+                          onChange={(e) => setSelectedSize(e.target.value)}
+                        />
                         <span className="flex items-center justify-center font-medium text-outerspace text-sm">
                           {size}
                         </span>
@@ -281,6 +332,7 @@ const ProductDetailsScreen = () => {
                     ))}
                   </div>
                 </ProductSizeWrapper>
+
                 <ProductColorWrapper>
                   <div className="prod-colors-top flex items-center flex-wrap">
                     <p className="text-lg font-semibold text-outerspace">
@@ -288,9 +340,15 @@ const ProductDetailsScreen = () => {
                     </p>
                   </div>
                   <div className="prod-colors-list flex items-center">
-                    {product_one?.colors?.map((color, index) => (
+                    {product?.colors?.map((color, index) => (
                       <div className="prod-colors-item" key={index}>
-                        <input type="radio" name="colors" />
+                        <input
+                          type="radio"
+                          name="colors"
+                          value={color}
+                          checked={selectedColor === color}
+                          onChange={(e) => setSelectedColor(e.target.value)}
+                        />
                         <span
                           className="prod-colorbox"
                           style={{ background: `${color}` }}
@@ -299,11 +357,13 @@ const ProductDetailsScreen = () => {
                     ))}
                   </div>
                 </ProductColorWrapper>
+
                 <div className="btn-and-price flex items-center flex-wrap">
                   <BaseLinkGreen
-                    to="/cart"
+                    //to="/cart"
                     as={BaseLinkGreen}
                     className="prod-add-btn"
+                    onClick={agregarAlCarrito}
                   >
                     <span className="prod-add-btn-icon">
                       <i className="bi bi-cart2"></i>
@@ -311,7 +371,7 @@ const ProductDetailsScreen = () => {
                     <span className="prod-add-btn-text">Add to cart</span>
                   </BaseLinkGreen>
                   <span className="prod-price text-xl font-bold text-outerspace">
-                    {currencyFormat(product_one.price)}
+                    {currencyFormat(product.price)}
                   </span>
                 </div>
                 <ProductServices />
@@ -325,5 +385,4 @@ const ProductDetailsScreen = () => {
     </>
   );
 };
-
 export default ProductDetailsScreen;

@@ -2,11 +2,13 @@ import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { Link } from "react-router-dom";
-import { cartItems } from "../../data/data";
+//import { cartItems } from "../../data/data";
 import CartTable from "../../components/cart/CartTable";
 import { breakpoints } from "../../styles/themes/default";
 import CartDiscount from "../../components/cart/CartDiscount";
 import CartSummary from "../../components/cart/CartSummary";
+
+import { useState, useEffect } from "react";
 
 const CartPageWrapper = styled.main`
   padding: 48px 0;
@@ -48,11 +50,26 @@ const CartContent = styled.div`
   }
 `;
 
-const CartScreen = () => {
+const CartScreen = (/*{ cartItems }*/) => {
   const breadcrumbItems = [
     { label: "Home", link: "/cart" },
     { label: "Add To Cart", link: "" },
   ];
+
+  const [cartItems, setCartItems] = useState(() => {
+    /*Estamos inicializando el estado cartItems (aray que almacena los items del carrito) utilizando useState.
+    Al llamar a useState con una función como argumento (en este caso una función flecha), esa función se ejecutará solo la primera vez que se renderice el componente y el valor que devuelva será el valor inicial del estado cartItems.
+    Dentro de la función pasada a useState, estamos recuperando los elementos del carrito almacenados en el localStorage con la clave 'cartItems'. Si los elementos existen en el localStorage, los parseamos de JSON a un array de JavaScript. De lo contrario, devolvemos un array vacío.*/
+    const storedCartItems = localStorage.getItem('cartItems');
+    return storedCartItems ? JSON.parse(storedCartItems) : [];
+  });
+
+  //Cargar carrito desde localStorage al montar el componente
+  useEffect(() => {
+    const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartItems(storedCartItems);
+  }, []);
+
   return (
     <CartPageWrapper>
       <Container>
@@ -71,11 +88,11 @@ const CartScreen = () => {
         </div>
         <CartContent className="grid items-start">
           <div className="cart-content-left">
-            <CartTable cartItems={cartItems} />
+            <CartTable cartItems={cartItems} setCartItems={setCartItems} />
           </div>
           <div className="grid cart-content-right">
             <CartDiscount />
-            <CartSummary />
+            <CartSummary cartItems={cartItems} setCartItems={setCartItems} />
           </div>
         </CartContent>
       </Container>

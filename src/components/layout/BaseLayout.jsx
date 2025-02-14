@@ -9,7 +9,8 @@ const BaseLayout = () => {
   return (
     //PLANTILLA DEL LOGUEADO
     <PageWrapper>
-      <AuthHeader />
+      <Header />
+      <div>PLANTILLA DEL LOGUEADO</div>
       <Sidebar />
       <div
         style={{

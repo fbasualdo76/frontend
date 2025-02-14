@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { PropTypes } from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { product_one } from "../../data/data";
 
@@ -82,39 +82,39 @@ const ProductPreviewWrapper = styled.div`
 `;
 
 const ProductPreview = ({ previewImages, product }) => {
-  const [activePreviewImage, setActivePreviewImage] = useState(
-    previewImages[0].imgSource
-  );
+  const [activePreviewImage, setActivePreviewImage] = useState(previewImages[0].imgSource);
 
   const handlePreviewImageChange = (previewImage) => {
     setActivePreviewImage(previewImage);
   };
 
   return (
-    <ProductPreviewWrapper className="grid items-center">
-      <div className="preview-items w-full">
-        {previewImages.map((previewImage) => {
-          return (
-            <div
-              className="preview-item-wrapper"
-              key={previewImage.id}
-              onClick={() => handlePreviewImageChange(previewImage.imgSource)}
-            >
-              <div className="preview-item">
-                <img
-                  src={previewImage.imgSource}
-                  alt=""
-                  className="object-fit-cover"
-                />
+    <>
+      <ProductPreviewWrapper className="grid items-center">
+        <div className="preview-items w-full">
+          {previewImages.map((previewImage) => {
+            return (
+              <div
+                className="preview-item-wrapper"
+                key={previewImage.id}
+                onClick={() => handlePreviewImageChange(previewImage.imgSource)}
+              >
+                <div className="preview-item">
+                  <img
+                    src={previewImage.imgSource}
+                    alt=""
+                    className="object-fit-cover"
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="preview-display">
-        <img src={activePreviewImage} className="object-fit-cover" alt="" />
-      </div>
-    </ProductPreviewWrapper>
+            );
+          })}
+        </div>
+        <div className="preview-display">
+          <img src={activePreviewImage} className="object-fit-cover" alt="" />
+        </div>
+      </ProductPreviewWrapper>
+    </>
   );
 };
 

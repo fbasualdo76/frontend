@@ -8,6 +8,7 @@ const AuthLayout = () => {
     //PLANTILLA DEL INVITADO
     <PageWrapper>
       <AuthHeader />
+      <div>PLANTILLA DEL INVITADO</div>
       <main>
         <Outlet />
       </main>

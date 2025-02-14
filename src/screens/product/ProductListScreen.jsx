@@ -110,7 +110,8 @@ const ProductListScreen = () => {
                 </li>
                 <li>
                   <Link to="/" className="text-lg font-semibold">
-                    Recommended SOY LA PAGINA DE LISTA
+                    Recommended
+                    <br />PAGINA QUE MUESTRA LA LISTA DE CARDS "ProductList", ENTRE OTROS COMPONENTES.
                   </Link>
                 </li>
               </ul>

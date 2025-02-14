@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { BaseButtonGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { currencyFormat } from "../../utils/helper";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { crearOrden } from "../fetching/orders.fetching";
 
 const CartSummaryWrapper = styled.div`
   background-color: ${defaultTheme.color_flash_white};
@@ -31,26 +35,59 @@ const CartSummaryWrapper = styled.div`
   }
 `;
 
-const CartSummary = () => {
+const CartSummary = ({ cartItems , setCartItems}) => {
+
+  const navigate = useNavigate();
+
+  // Calcular subtotal sumando precio * cantidad de cada producto
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  // Calcular el costo total de envío (sumando el shipping de cada producto)
+  const shipping = cartItems.reduce((acc, item) => acc + item.shipping, 0);
+
+  // Calcular el total final
+  const grandTotal = subtotal //+ shipping;
+
+  const handleProceedToCheckout = async () => {
+    try {
+      // Crear la orden en el backend
+      const response = await crearOrden(cartItems);
+
+      if (response.status === 200) {
+        // Vaciar el carrito en el frontend (localStorage y estado)
+        localStorage.removeItem("cartItems");
+        setCartItems([]); // Asegúrate de tener acceso a setCartItems
+
+        // Redirigir a la página de detalles de la orden
+        //navigate(`/order_detail/${response.order_id}`);
+        navigate("/checkout");
+      } else {
+        console.error("Error al crear la orden:", response.message);
+      }
+    } catch (error) {
+      console.error("Error en el checkout:", error);
+    }
+  };
+
   return (
     <CartSummaryWrapper>
       <ul className="summary-list">
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Sub Total</span>
-          <span className="font-medium text-outerspace">$513.00</span>
+          <span className="font-medium text-outerspace">{currencyFormat(subtotal)}</span>
         </li>
-        <li className="summary-item flex justify-between">
+        {/*<li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Shipping</span>
-          <span className="font-medium text-outerspace">$5.00</span>
-        </li>
+          <span className="font-medium text-outerspace">{currencyFormat(shipping)}</span>
+        </li>*/}
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Grand Total</span>
           <span className="summary-item-value font-bold text-outerspace">
-            $518.00
+            {currencyFormat(grandTotal)}
           </span>
         </li>
       </ul>
-      <BaseButtonGreen type="submit" className="checkout-btn">
+      <BaseButtonGreen type="submit" className="checkout-btn" onClick={handleProceedToCheckout}>
         Proceed To Checkout
       </BaseButtonGreen>
     </CartSummaryWrapper>
@@ -58,3 +95,7 @@ const CartSummary = () => {
 };
 
 export default CartSummary;
+
+CartSummary.propTypes = {
+  cartItems: PropTypes.array.isRequired,
+};
