@@ -94,7 +94,7 @@ const BillingDetailsWrapper = styled.div`
   }
 `;
 
-const Billing = () => {
+const Billing = ({ orderData }) => {
   return (
     <BillingOrderWrapper className="billing-and-order grid items-start">
       <BillingDetailsWrapper>
@@ -220,7 +220,7 @@ const Billing = () => {
           </div>
         </form>
       </BillingDetailsWrapper>
-      <CheckoutSummary />
+      <CheckoutSummary orderData={orderData} /> {/* Pasamos la orden aquí */}
     </BillingOrderWrapper>
   );
 };

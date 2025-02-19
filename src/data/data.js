@@ -689,7 +689,7 @@ const orderData = [
         price: 23,
         imgSource: staticImages.cart1,
       },
-      {
+      /*{
         id: "product_02",
         name: "Stretchy jumper for women",
         color: "Maroon",
@@ -704,10 +704,10 @@ const orderData = [
         quantity: 10,
         price: 90,
         imgSource: staticImages.cart3,
-      },
+      },*/
     ],
   },
-  {
+  /*{
     id: "order_2",
     order_no: "#8958360118",
     order_date: "2 June 2023 2:40 PM",
@@ -740,7 +740,7 @@ const orderData = [
         imgSource: staticImages.cart3,
       },
     ],
-  },
+  },*/
 ];
 
 const wishlistData = [

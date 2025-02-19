@@ -5,6 +5,7 @@ import Billing from "../../components/checkout/Billing";
 import ShippingPayment from "../../components/checkout/ShippingPayment";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const CheckoutScreenWrapper = styled.main`
   padding: 48px 0;
@@ -21,11 +22,13 @@ const CheckoutScreenWrapper = styled.main`
 `;
 
 const CheckoutScreen = () => {
+  const location = useLocation();
+  const orderData = location.state?.orderData;//Recibe los datos de la orden (orderData) que fueron pasados desde CartSummary
   return (
     <CheckoutScreenWrapper>
       <Container>
         <Title titleText={"Check Out"} />
-        <Billing />
+        <Billing orderData={orderData} /> {/* Pasamos la orden a Billing */}
         <div className="horiz-line-separator w-full"></div>
         <ShippingPayment />
       </Container>

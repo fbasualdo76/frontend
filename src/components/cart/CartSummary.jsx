@@ -35,8 +35,7 @@ const CartSummaryWrapper = styled.div`
   }
 `;
 
-const CartSummary = ({ cartItems , setCartItems}) => {
-
+const CartSummary = ({ cartItems, setCartItems }) => {
   const navigate = useNavigate();
 
   // Calcular subtotal sumando precio * cantidad de cada producto
@@ -52,15 +51,14 @@ const CartSummary = ({ cartItems , setCartItems}) => {
     try {
       // Crear la orden en el backend
       const response = await crearOrden(cartItems);
-
       if (response.status === 200) {
+        // Pasar la orden a CheckoutScreen
+        navigate("/checkout", { state: { orderData: response.orderData } });
         // Vaciar el carrito en el frontend (localStorage y estado)
         localStorage.removeItem("cartItems");
         setCartItems([]); // Asegúrate de tener acceso a setCartItems
-
         // Redirigir a la página de detalles de la orden
         //navigate(`/order_detail/${response.order_id}`);
-        navigate("/checkout");
       } else {
         console.error("Error al crear la orden:", response.message);
       }
