@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 //import { cartItems } from "../../data/data";
 import CartTable from "../../components/cart/CartTable";
 import { breakpoints } from "../../styles/themes/default";
@@ -51,6 +51,8 @@ const CartContent = styled.div`
 `;
 
 const CartScreen = (/*{ cartItems }*/) => {
+  const navigate = useNavigate();
+
   const breadcrumbItems = [
     { label: "Home", link: "/cart" },
     { label: "Add To Cart", link: "" },
@@ -68,7 +70,11 @@ const CartScreen = (/*{ cartItems }*/) => {
   useEffect(() => {
     const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartItems(storedCartItems);
-  }, []);
+    // Redirigir a la pantalla de carrito vacío si no hay productos en el carrito
+    if (storedCartItems.length === 0) {
+      navigate("/empty_cart");
+    }
+  }, [navigate]);
 
   return (
     <CartPageWrapper>
@@ -99,5 +105,4 @@ const CartScreen = (/*{ cartItems }*/) => {
     </CartPageWrapper>
   );
 };
-
 export default CartScreen;

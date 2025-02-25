@@ -2,7 +2,6 @@ import styled from "styled-components";
 import CartItem from "./CartItem";
 import { PropTypes } from "prop-types";
 import { breakpoints } from "../../styles/themes/default";
-import React, { useEffect, useState } from 'react'
 
 const ScrollbarXWrapper = styled.div`
   overflow-x: scroll;

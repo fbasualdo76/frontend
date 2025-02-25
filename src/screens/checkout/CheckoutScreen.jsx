@@ -4,7 +4,6 @@ import Title from "../../components/common/Title";
 import Billing from "../../components/checkout/Billing";
 import ShippingPayment from "../../components/checkout/ShippingPayment";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const CheckoutScreenWrapper = styled.main`

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from "styled-components";
 import { PropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { currencyFormat } from "../../utils/helper";
-import { cartItems } from '../../data/data';
+//import { cartItems } from '../../data/data';
 
 const CartTableRowWrapper = styled.tr`
   .cart-tbl {

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { orderData } from "../../data/data";
+//import { orderData } from "../../data/data";
 import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 
@@ -74,17 +74,65 @@ const CheckoutSummaryWrapper = styled.div`
   }
 `;
 
+//ESTE ESTILO ES COPIADO DE ProductDetailsScreen.jsx
+const ProductColorWrapper = styled.div`
+  /* Antes 32 */
+  margin-top: 0px;
+
+  @media (max-width: ${breakpoints.sm}) {
+    margin-top: 24px;
+  }
+
+  .prod-colors-top {
+    margin-bottom: 16px;
+  }
+
+  .prod-colors-list {
+    column-gap: 12px;
+  }
+
+  .prod-colors-item {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    transition: ${defaultTheme.default_transition};
+
+    &:hover {
+      scale: 0.9;
+    }
+
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      opacity: 0;
+      cursor: pointer;
+
+      &:checked + span {
+        outline: 1px solid ${defaultTheme.color_gray};
+        outline-offset: 3px;
+      }
+    }
+
+    .prod-colorbox {
+      border-radius: 100%;
+      width: 22px;
+      height: 22px;
+      display: inline-block;
+    }
+  }
+`;
+
 const CheckoutSummary = ({ orderData }) => {
-  console.log("ESTE ES EL ORDERDATA EN CHECKOUTSUMMARY:", orderData);
+  //console.log("ESTE ES EL ORDERDATA EN CHECKOUTSUMMARY:", orderData);
   //Total de items
   const totalItems = orderData[0]?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   //suma de los precios de todos los productos
   const subtotal = orderData[0]?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
   // Calcular el total final
   const grandTotal = subtotal //+ shipping;
-
-
-
   return (
     <CheckoutSummaryWrapper>
       <h4 className="text-xxl font-bold text-outersapce">
@@ -107,9 +155,26 @@ const CheckoutSummary = ({ orderData }) => {
                     {order.title}&nbsp;
                     <span className="text-gray">x{order.quantity}</span>
                   </p>
-                  <p className="text-base font-bold text-outerspaace">
+                  <p className="text-base font-bold text-outerspaace flex items-center">
                     Color: &nbsp;
-                    <span className="text-gray font-normal">{order.color}</span>
+                    {/*<span className="text-gray font-normal">{order.color}</span>*/}
+
+                    {/*ESTE WRAPPER ES COPIADO DE ProductDetailsScreen.jsx*/}
+                    <ProductColorWrapper>
+                      <div className="prod-colors-list flex items-center">
+                        <div className="prod-colors-item">
+                          <input
+                            type="radio"
+                            name="color"
+                          />
+                          <span
+                            className="prod-colorbox"
+                            style={{ background: `${order.color}` }}
+                          ></span>
+                        </div>
+                      </div>
+                    </ProductColorWrapper>
+
                   </p>
                 </div>
                 <div className="order-item-info-r text-gray font-bold text-base">

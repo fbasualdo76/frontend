@@ -150,7 +150,7 @@ const ShippingPaymentWrapper = styled.div`
 const ShippingPayment = () => {
   return (
     <ShippingPaymentWrapper>
-      <div className="shipping-addr">
+      {/*<div className="shipping-addr">
         <h3 className="text-xxl shipping-addr-title">Shipping Address</h3>
         <p className="text-base text-outerspace">
           Select the address that matches your card or payment method.
@@ -193,7 +193,7 @@ const ShippingPayment = () => {
             <span className="font-semibold text-lg">$5.00</span>
           </div>
         </div>
-      </div>
+      </div>*/}
 
       <div className="payment-method">
         <h3 className="text-xxl payment-method-title">Payment Method</h3>
