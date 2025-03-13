@@ -129,7 +129,7 @@ const CheckoutSummary = ({ orderData }) => {
   //console.log("ESTE ES EL ORDERDATA EN CHECKOUTSUMMARY:", orderData);
   //Total de items
   const totalItems = orderData[0]?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  //suma de los precios de todos los productos
+  //Suma de los precios de todos los productos
   const subtotal = orderData[0]?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
   // Calcular el total final
   const grandTotal = subtotal //+ shipping;

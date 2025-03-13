@@ -3,10 +3,8 @@ import { Input } from "../../styles/form";
 import { cardsData } from "../../data/data";
 import { BaseButtonGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import { useState, useEffect } from "react";
-import { obtenerPreferencia } from "../fetching/payments.fetching";
-import { initMercadoPago, Payment } from '@mercadopago/sdk-react' //Importamos el SDK
-
+import { useState } from "react";
+import { procesarPago } from "../fetching/payments.fetching";
 
 /*Diferencia clave entre Checkout API y Checkout Pro:
 Checkout API → Se usa para pagos con tarjeta en tu frontend. NO usa preferencias.
@@ -155,79 +153,67 @@ const ShippingPaymentWrapper = styled.div`
   }
 `;
 
-const ShippingPayment = () => {
+const ShippingPaymentPRO = () => {
+  const [cardData, setCardData] = useState({
+    cardNumber: "5031 7557 3453 0604",
+    cardName: "FRANCO BASUALDO",
+    expirationDate: "11/30",
+    securityCode: "123"
+  });
 
-  const [preferenceId, setPreferenceId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  initMercadoPago("TEST-d73fdfd0-fd0f-461f-85f7-06633477f590"/*, { locale: "es-AR" }*/)
-
-  useEffect(() => {
-    const obtenerIdPreferencia = async () => {
-      try {
-        const productos = { unit_price: 100, title: "Compra en mi tienda en frontend" };
-        const result = await obtenerPreferencia(productos);
-        //console.log("RESULT DE FORMULARIO:", result.preferenceId);
-        if (result?.preferenceId) {
-          setPreferenceId(result.preferenceId);
-        } else {
-          setError("NO SE OBTUVO UN PREFERENCEID VALIDO");
-        }
-      } catch (error) {
-        setError("ERROR AL OBTENER EL PREFERENCEID");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerIdPreferencia();
-  }, []);  
-
-  const initialization = {
-    amount: 100,
-    preferenceId: preferenceId,
+  const handleChange = (e) => {
+    setCardData({ ...cardData, [e.target.name]: e.target.value });
   };
 
-  const customization = {
-    paymentMethods: {
-      atm: "all",
-      ticket: "all",
-      creditCard: "all",
-      prepaidCard: "all",
-      debitCard: "all",
-      mercadoPago: "all",
-    },
-  };
-
-  const onSubmit = async ({ formData }) => {
+  const handlePayment = async () => {
     try {
-      const response = await fetch("/process_payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-      console.log("Pago procesado:", result);
+      const paymentData = { ...cardData, paymentMethod: "Credit Card" };
+      const response = await procesarPago(paymentData);
+      console.log("Pago exitoso", response);
     } catch (error) {
-      console.error("Error al procesar el pago:", error);
+      console.error("Error en el pago", error);
     }
   };
 
-  if (loading) return <div>CARGANDO FORMULARIO DE PAGO...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!preferenceId) return <div>NO SE PUDO CARGAR EL FORMULARIO DE PAGO.</div>;
-
   return (
     <ShippingPaymentWrapper>
-      <Payment
-        initialization={initialization}
-        customization={customization}
-        onSubmit={onSubmit}
-        onError={(error) => console.error("Error en el Brick:", error)}
-        onReady={() => console.log("Brick listo para ser utilizado.")}
-      />
+      <div className="payment-method">
+        <h3 className="text-xxl payment-method-title">Payment Method</h3>
+        <p className="text-base text-outerspace">All transactions are secure and encrypted.</p>
+        <div className="list-group">
+          <div className="list-group-item">
+            <div className="flex items-center list-group-item-head">
+              <Input type="radio" name="payment_method" checked readOnly />
+              <p className="font-semibold text-lg">Credit Card</p>
+            </div>
+            <div className="payment-cards flex flex-wrap">
+              {cardsData?.map((card) => (
+                <div className="payment-card flex items-center justify-center" key={card.id}>
+                  <Input type="radio" name="payment_cards" />
+                  <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
+                    <img src={card.imgSource} alt="" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="payment-details">
+              <div className="form-elem-group">
+                <Input type="text" className="form-elem" name="cardNumber" placeholder="Card number" onChange={handleChange} />
+                <Input type="text" className="form-elem" name="cardName" placeholder="Name on card" onChange={handleChange} />
+              </div>
+              <div className="form-elem-group">
+                <Input type="text" className="form-elem" name="expirationDate" placeholder="Expiration date (MM/YY)" onChange={handleChange} />
+                <Input type="text" className="form-elem" name="securityCode" placeholder="Security Code" onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <BaseButtonGreen type="button" className="pay-now-btn" onClick={handlePayment}>
+        Pay Now
+      </BaseButtonGreen>
     </ShippingPaymentWrapper>
   );
 };
 
-export default ShippingPayment;
+export default ShippingPaymentPRO;
