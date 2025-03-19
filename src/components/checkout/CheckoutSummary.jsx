@@ -131,7 +131,7 @@ const CheckoutSummary = ({ orderData }) => {
   const totalItems = orderData[0]?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   //Suma de los precios de todos los productos
   const subtotal = orderData[0]?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
-  // Calcular el total final
+  // Calcular el total final. DEJO DE USAR EL GRANDTOTAL Y USO EL orderData[0].total QUE ES EL TOTAL DE LA ORDEN.
   const grandTotal = subtotal //+ shipping;
   return (
     <CheckoutSummaryWrapper>
@@ -204,7 +204,9 @@ const CheckoutSummary = ({ orderData }) => {
         <li className="list-separator"></li>
         <li className="flex items-center justify-between">
           <span className="text-outerspace font-bold text-lg">Total</span>
-          <span className="text-outerspace font-bold text-lg">{currencyFormat(grandTotal)}</span>
+          <span className="text-outerspace font-bold text-lg">{currencyFormat(orderData[0].total)}</span>
+          
+
         </li>
       </ul>
     </CheckoutSummaryWrapper>

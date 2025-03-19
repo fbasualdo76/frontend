@@ -29,7 +29,7 @@ const CheckoutScreen = () => {
         <Title titleText={"Check Out"} />
         <Billing orderData={orderData} /> {/* Pasamos la orden a Billing */}
         <div className="horiz-line-separator w-full"></div>
-        <ShippingPayment />
+        <ShippingPayment orderData={orderData} />{/* Pasamos la orden a ShippongPayment */}
       </Container>
     </CheckoutScreenWrapper>
   );

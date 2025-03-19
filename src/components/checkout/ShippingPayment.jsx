@@ -155,18 +155,20 @@ const ShippingPaymentWrapper = styled.div`
   }
 `;
 
-const ShippingPayment = () => {
+const ShippingPayment = ({ orderData }) => {
 
   const [preferenceId, setPreferenceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
+  //console.log("ORDER DATA:", orderData[0].total);
+
   initMercadoPago("TEST-d73fdfd0-fd0f-461f-85f7-06633477f590"/*, { locale: "es-AR" }*/)
 
   useEffect(() => {
     const obtenerIdPreferencia = async () => {
       try {
-        const productos = { unit_price: 100, title: "Compra en mi tienda en frontend" };
+        const productos = { unit_price: orderData[0].total, title: "Compra en mi tienda (FRONTEND)" };
         const result = await obtenerPreferencia(productos);
         //console.log("RESULT DE FORMULARIO:", result.preferenceId);
         if (result?.preferenceId) {
@@ -181,10 +183,10 @@ const ShippingPayment = () => {
       }
     };
     obtenerIdPreferencia();
-  }, []);  
+  }, []);
 
   const initialization = {
-    amount: 100,
+    amount: 10,
     preferenceId: preferenceId,
   };
 
@@ -199,15 +201,57 @@ const ShippingPayment = () => {
     },
   };
 
-  const onSubmit = async ({ formData }) => {
+  const onSubmit = async (formDataObject) => {
+    /*
+    Recibo el formDataObject de Mercado Pago. formDataObject es un objeto que contiene los datos que envía el Brick al hacer clic en el botón de pago. 
+    Haciendo console.log("FORMDATAOBJECT:", formDataObject); 
+    --Podrías ver algo así en la consola:
+    {
+      paymentType: "wallet_purchase",
+      selectedPaymentMethod: "wallet_purchase",
+      formData: null
+    }
+    
+    --O si fuera un pago con tarjeta:
+    {
+      paymentType: "credit_card",
+      selectedPaymentMethod: "visa",
+      formData: { 
+        cardNumber: "1234 5678 9012 3456",
+        cardExpirationDate: "12/25",
+        cardholderName: "John Doe",
+        cardholderIdentification: "12345678",
+        securityCode: "123"
+      }
+    }  
+    */
+   
     try {
-      const response = await fetch("/process_payment", {
+      // Si se usa Mercado Pago Wallet (redirección)
+      if (formDataObject?.paymentType === "wallet_purchase") {
+        //console.log("Redirigiendo a Mercado Pago Wallet...");
+        return; // Detenemos aquí porque el Brick maneja la redirección automáticamente.
+      }
+
+      // Si se usa tarjeta de crédito o débito (se envía un formData válido)
+      if (!formDataObject?.formData) {
+        console.error("El formulario no envió datos válidos.");
+        return;
+      }
+
+      const response = await fetch(`${URL.URL_API}/api/payments/procesar-pago`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataObject.formData),
       });
+
+      if (!response.ok) {
+        throw new Error("Error al procesar el pago. Inténtelo nuevamente.");
+      }
+
       const result = await response.json();
       console.log("Pago procesado:", result);
+
     } catch (error) {
       console.error("Error al procesar el pago:", error);
     }
@@ -222,7 +266,12 @@ const ShippingPayment = () => {
       <Payment
         initialization={initialization}
         customization={customization}
-        onSubmit={onSubmit}
+        
+        onSubmit={(formDataObject) => {
+          //console.log("ON SUBMIT - Datos recibidos:", formDataObject);
+          onSubmit(formDataObject); // Llamada a tu función onSubmit original
+        }}
+
         onError={(error) => console.error("Error en el Brick:", error)}
         onReady={() => console.log("Brick listo para ser utilizado.")}
       />
