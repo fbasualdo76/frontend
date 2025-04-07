@@ -2,9 +2,10 @@
 import { HTTP, URL } from "./http";
 const ROUTE = "/api/payments";
 
+// OBTENER PREFERENCE_ID PARA EL BRICK DE PAGO
 export const obtenerPreferencia = async (paymentData) => {
     try {
-        console.log("DATOS QUE SE ENVIAN AL BACKEND:", paymentData);
+        //console.log("DATOS QUE SE ENVIAN AL BACKEND:", paymentData);
 
         //console.log("ENVIANDO A:", URL.URL_API + ROUTE);
 
@@ -29,5 +30,16 @@ export const obtenerPreferencia = async (paymentData) => {
     } catch (error) {
         //console.error("ERROR AL OBTENER LA PREFERENCIA DE PAGO:", error);
         throw { message: error.message || "ERROR AL OBTENER LA PREFERENCIA DE PAGO." };
+    }
+};
+
+// PROCESAR PAGO CON TARJETA DE CRÉDITO / DÉBITO
+export const procesarPago = async (paymentData) => {
+    try {
+        const result = await HTTP.POST(`${URL.URL_API}${ROUTE}/procesar-pago`, paymentData);
+        if (!result) throw result;
+        return result;
+    } catch (error) {
+        throw { message: error.message || "ERROR AL PROCESAR EL PAGO - PAYMENTS.FETCHING.JS." };
     }
 };

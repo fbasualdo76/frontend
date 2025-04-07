@@ -5,6 +5,7 @@ import { BaseButtonGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useState, useEffect } from "react";
 import { obtenerPreferencia } from "../fetching/payments.fetching";
+import { procesarPago } from "../fetching/payments.fetching";
 import { initMercadoPago, Payment } from '@mercadopago/sdk-react' //Importamos el SDK
 
 
@@ -169,6 +170,7 @@ const ShippingPayment = ({ orderData }) => {
     const obtenerIdPreferencia = async () => {
       try {
         const productos = { unit_price: orderData[0].total, title: "Compra en mi tienda (FRONTEND)" };
+        //El objeto products sirve para crear la preferencia de pago en tu backend.
         const result = await obtenerPreferencia(productos);
         //console.log("RESULT DE FORMULARIO:", result.preferenceId);
         if (result?.preferenceId) {
@@ -185,8 +187,11 @@ const ShippingPayment = ({ orderData }) => {
     obtenerIdPreferencia();
   }, []);
 
+//initialization es lo que el Brick de Pago usa para inicializarse en tu frontend. Sirve para:
+//Mostrar el monto que se va a pagar (amount).
+//Asociar el Brick con la preferencia que creaste (preferenceId).
   const initialization = {
-    amount: 10,
+    amount: orderData[0].total,
     preferenceId: preferenceId,
   };
 
@@ -225,36 +230,26 @@ const ShippingPayment = ({ orderData }) => {
       }
     }  
     */
-   
-    try {
-      // Si se usa Mercado Pago Wallet (redirección)
-      if (formDataObject?.paymentType === "wallet_purchase") {
-        //console.log("Redirigiendo a Mercado Pago Wallet...");
-        return; // Detenemos aquí porque el Brick maneja la redirección automáticamente.
-      }
 
-      // Si se usa tarjeta de crédito o débito (se envía un formData válido)
-      if (!formDataObject?.formData) {
-        console.error("El formulario no envió datos válidos.");
-        return;
-      }
-
-      const response = await fetch(`${URL.URL_API}/api/payments/procesar-pago`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formDataObject.formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al procesar el pago. Inténtelo nuevamente.");
-      }
-
-      const result = await response.json();
-      console.log("Pago procesado:", result);
-
-    } catch (error) {
-      console.error("Error al procesar el pago:", error);
+    // Si se usa Mercado Pago Wallet (pago redirigido)
+    if (formDataObject?.paymentType === "wallet_purchase") {
+      //console.log("Redirigiendo a Mercado Pago Wallet...");
+      return; // Detenemos aquí porque el Brick maneja la redirección automáticamente.
     }
+
+    // Si se usa Tarjeta de crédito o débito (pago directo)(se envía un formData válido)
+    if (!formDataObject?.formData) {
+      console.error("El formulario no envió datos válidos.");
+      return;
+    }
+
+    try {
+      const result = await procesarPago(formDataObject.formData);
+      console.log("PAGO EXITOSO - SHIPPINGPAYMENT.", result.resultadoPago.status);
+    } catch (error) {
+      console.error("ERROR AL PROCESAR EL PAGO - SHIPPINGPAYMENT.", error);
+    }
+
   };
 
   if (loading) return <div>CARGANDO FORMULARIO DE PAGO...</div>;
@@ -266,7 +261,7 @@ const ShippingPayment = ({ orderData }) => {
       <Payment
         initialization={initialization}
         customization={customization}
-        
+
         onSubmit={(formDataObject) => {
           //console.log("ON SUBMIT - Datos recibidos:", formDataObject);
           onSubmit(formDataObject); // Llamada a tu función onSubmit original
