@@ -205,7 +205,7 @@ const CheckoutSummary = ({ orderData }) => {
         <li className="flex items-center justify-between">
           <span className="text-outerspace font-bold text-lg">Total</span>
           <span className="text-outerspace font-bold text-lg">{currencyFormat(orderData[0].total)}</span>
-          
+          <span>{orderData[0].id}</span>
 
         </li>
       </ul>

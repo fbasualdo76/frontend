@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { obtenerPreferencia } from "../fetching/payments.fetching";
 import { procesarPago } from "../fetching/payments.fetching";
 import { initMercadoPago, Payment } from '@mercadopago/sdk-react' //Importamos el SDK
+import { actualizarOrden } from "../fetching/orders.fetching";
+import { useNavigate } from "react-router-dom";
 
 
 /*Diferencia clave entre Checkout API y Checkout Pro:
@@ -161,6 +163,7 @@ const ShippingPayment = ({ orderData }) => {
   const [preferenceId, setPreferenceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   //console.log("ORDER DATA:", orderData[0].total);
 
@@ -176,10 +179,10 @@ const ShippingPayment = ({ orderData }) => {
         if (result?.preferenceId) {
           setPreferenceId(result.preferenceId);
         } else {
-          setError("NO SE OBTUVO UN PREFERENCEID VALIDO");
+          setError("NO SE OBTUVO UN PREFERENCEID VALIDO.");
         }
       } catch (error) {
-        setError("ERROR AL OBTENER EL PREFERENCEID");
+        setError("ERROR AL OBTENER EL PREFERENCEID.");
       } finally {
         setLoading(false);
       }
@@ -187,9 +190,9 @@ const ShippingPayment = ({ orderData }) => {
     obtenerIdPreferencia();
   }, []);
 
-//initialization es lo que el Brick de Pago usa para inicializarse en tu frontend. Sirve para:
-//Mostrar el monto que se va a pagar (amount).
-//Asociar el Brick con la preferencia que creaste (preferenceId).
+  //initialization es lo que el Brick de Pago usa para inicializarse en tu frontend. Sirve para:
+  //Mostrar el monto que se va a pagar (amount).
+  //Asociar el Brick con la preferencia que creaste (preferenceId).
   const initialization = {
     amount: orderData[0].total,
     preferenceId: preferenceId,
@@ -231,25 +234,42 @@ const ShippingPayment = ({ orderData }) => {
     }  
     */
 
-    // Si se usa Mercado Pago Wallet (pago redirigido)
+    //Si se usa Mercado Pago Wallet (pago redirigido)
     if (formDataObject?.paymentType === "wallet_purchase") {
       //console.log("Redirigiendo a Mercado Pago Wallet...");
       return; // Detenemos aquí porque el Brick maneja la redirección automáticamente.
     }
 
-    // Si se usa Tarjeta de crédito o débito (pago directo)(se envía un formData válido)
+    //Si se usa Tarjeta de crédito o débito (pago directo)(se envía un formData válido)
     if (!formDataObject?.formData) {
       console.error("El formulario no envió datos válidos.");
       return;
     }
 
+    //Variables definidas con let (y no const) fuera del try para permitir su reasignación en distintos bloques (por ejemplo, obtener datos del pago y luego usarlos en la actualización de la orden).
+    let resultadoPago;
+    let payment_status;
+    let payment_method;
+
+    //Procesar el pago.
     try {
       const result = await procesarPago(formDataObject.formData);
-      console.log("PAGO EXITOSO - SHIPPINGPAYMENT.", result.resultadoPago.status);
+      resultadoPago = result?.resultadoPago;//Guardo el resultado de procesarPago() en resultadoPago.
+      payment_status = resultadoPago?.status;//Guardo el status del pago en payment_status.
+      payment_method = resultadoPago?.payment_method?.id;//Guardo el payment_method del pago en payment_method.
+      console.log("PAGO EXITOSO - SHIPPINGPAYMENT."/*, result.resultadoPago*/);
     } catch (error) {
       console.error("ERROR AL PROCESAR EL PAGO - SHIPPINGPAYMENT.", error);
     }
 
+    try {
+      const resultActualizar = await actualizarOrden(orderData[0].id, { payment_method, payment_status, });
+      console.log("ORDEN ACTUALIZADA CORRECTAMENTE");
+    } catch (error) {
+      console.error("PAGO OK, PERO ERROR AL ACTUALIZAR LA ORDEN:", error);
+      //Podrías guardar este error en un sistema de log o notificar al admin
+    }
+    navigate("/confirm"/*, { state: { orderData: response.orderData } }*/);
   };
 
   if (loading) return <div>CARGANDO FORMULARIO DE PAGO...</div>;
