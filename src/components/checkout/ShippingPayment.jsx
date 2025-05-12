@@ -211,7 +211,12 @@ const ShippingPayment = ({ orderData }) => {
 
   const onSubmit = async (formDataObject) => {
     /*
-    Recibo el formDataObject de Mercado Pago. formDataObject es un objeto que contiene los datos que envía el Brick al hacer clic en el botón de pago. 
+    Recibo el formDataObject "de Mercado Pago". El formDataObject es un objeto que devuelve el Brick de Mercado Pago al hacer clic en el botón de pago.
+    Este objeto contiene:
+    El tipo de pago que el usuario seleccionó (paymentType)
+    El método de pago específico (selectedPaymentMethod)
+    Y los datos del formulario, SI CORRESPONDE (formData)
+
     Haciendo console.log("FORMDATAOBJECT:", formDataObject); 
     --Podrías ver algo así en la consola:
     {
@@ -251,6 +256,13 @@ const ShippingPayment = ({ orderData }) => {
     let payment_status;
     let payment_method;
 
+    /*Cuando el usuario hace clic en "Procced To Checkout" (CartSummary) se registra en la BD la ORDEN, la cual se registra con "payment_method: Pending" y "payment_status: Pending". Si el usuario elige pagar con tarjeta de credito/debito, lo cual se sabe mediante el objeto "formDataObject",
+    1.Se manda el formData al backend (procesarPago - payments.fething.js).
+    2.El backend registra el pago con Mercado Pago (a través de la API).
+    2.Se recibe una respuesta con datos como status y payment_method, los cuales guardo en las variables "payment_status" y "payment_method".
+    Luego actualizo (actualizarOrden(id de la orden, payment_method, payment_status ) - orders.fetching.js), con el id de la ORDEN, los campos payment_method, payment_status de la BD.
+    */
+
     //Procesar el pago.
     try {
       const result = await procesarPago(formDataObject.formData);
@@ -261,10 +273,10 @@ const ShippingPayment = ({ orderData }) => {
     } catch (error) {
       console.error("ERROR AL PROCESAR EL PAGO - SHIPPINGPAYMENT.", error);
     }
-
+    //Actualizar el payment_method y payment_status en la BD con los el resultado que nos devuelve procesarPago.
     try {
       const resultActualizar = await actualizarOrden(orderData[0].id, { payment_method, payment_status, });
-      console.log("ORDEN ACTUALIZADA CORRECTAMENTE");
+      console.log("ORDEN ACTUALIZADA CORRECTAMENTE - SHIPPINGPAYMENT.");
     } catch (error) {
       console.error("PAGO OK, PERO ERROR AL ACTUALIZAR LA ORDEN:", error);
       //Podrías guardar este error en un sistema de log o notificar al admin
@@ -281,7 +293,6 @@ const ShippingPayment = ({ orderData }) => {
       <Payment
         initialization={initialization}
         customization={customization}
-
         onSubmit={(formDataObject) => {
           //console.log("ON SUBMIT - Datos recibidos:", formDataObject);
           onSubmit(formDataObject); // Llamada a tu función onSubmit original

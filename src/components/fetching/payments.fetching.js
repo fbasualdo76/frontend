@@ -6,9 +6,7 @@ const ROUTE = "/api/payments";
 export const obtenerPreferencia = async (paymentData) => {
     try {
         //console.log("DATOS QUE SE ENVIAN AL BACKEND:", paymentData);
-
         //console.log("ENVIANDO A:", URL.URL_API + ROUTE);
-
         // Enviamos los datos del pago al backend
         const result = await HTTP.POST(URL.URL_API + ROUTE, paymentData);
 
