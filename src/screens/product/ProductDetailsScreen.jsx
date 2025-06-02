@@ -208,6 +208,9 @@ const ProductDetailsScreen = () => {
     const fetchData = async () => {
       try {
         const productoObtenido = await obtenerDetalleProducto(id)
+
+        //console.log(productoObtenido)
+
         setLoading(false)
         setProduct(productoObtenido)
         setErrorText('')
@@ -267,7 +270,7 @@ const ProductDetailsScreen = () => {
       }
       //Guardar el carrito actualizado en localStorage
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      
+
       //Agregar un pequeño delay para asegurar que el almacenamiento se complete
       setTimeout(() => {
         navigate("/cart");// Redirigir al carrito
@@ -335,23 +338,24 @@ const ProductDetailsScreen = () => {
 
                 <ProductColorWrapper>
                   <div className="prod-colors-top flex items-center flex-wrap">
-                    <p className="text-lg font-semibold text-outerspace">
-                      Colours Available
-                    </p>
+                    <p className="text-lg font-semibold text-outerspace">Colours Available</p>
                   </div>
                   <div className="prod-colors-list flex items-center">
-                    {product?.colors?.map((color, index) => (
+                    {product.colors.map((color, index) => (
                       <div className="prod-colors-item" key={index}>
                         <input
                           type="radio"
                           name="colors"
-                          value={color}
-                          checked={selectedColor === color}
+                          value={color.code}
+                          checked={selectedColor === color.code}
                           onChange={(e) => setSelectedColor(e.target.value)}
                         />
                         <span
                           className="prod-colorbox"
-                          style={{ background: `${color}` }}
+                          style={{
+                            backgroundColor: color.code,
+                            border: color.code === '#FFFFFF' ? '1px solid #ccc' : 'none'
+                          }}
                         ></span>
                       </div>
                     ))}

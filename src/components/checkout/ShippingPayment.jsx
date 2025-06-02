@@ -13,7 +13,9 @@ import { useNavigate } from "react-router-dom";
 
 /*Diferencia clave entre Checkout API y Checkout Pro:
 Checkout API → Se usa para pagos con tarjeta en tu frontend. NO usa preferencias.
-Checkout Pro → Redirige a Mercado Pago. SÍ usa preferencias.*/
+Checkout Pro → Redirige a Mercado Pago. SÍ usa preferencias.
+
+Estoy implementando el PAYMENT BRICKS que es una combinacion de Checkout Pro (con preferencia y redirección) y Checkout API (pago directo con tarjeta).*/
 
 const ShippingPaymentWrapper = styled.div`
   .shipping-addr,
@@ -167,14 +169,26 @@ const ShippingPayment = ({ orderData }) => {
 
   //console.log("ORDER DATA:", orderData[0].total);
 
-  initMercadoPago("TEST-d73fdfd0-fd0f-461f-85f7-06633477f590"/*, { locale: "es-AR" }*/)
+  //FRAN
+  //initMercadoPago("TEST-d73fdfd0-fd0f-461f-85f7-06633477f590", { locale: "es-AR" })
+  
+  //NICO
+  initMercadoPago("TEST-334a6533-86ed-44b1-8a0c-4649122d54a0", { locale: "es-AR" })
 
   useEffect(() => {
     const obtenerIdPreferencia = async () => {
       try {
-        const productos = { unit_price: orderData[0].total, title: "Compra en mi tienda (FRONTEND)" };
+        const productos = {
+          orderId: orderData[0].id,
+          title: "Compra en mi tienda (FRONTEND)",
+          quantity: 1,
+          unit_price: orderData[0].total,
+        };
         //El objeto products sirve para crear la preferencia de pago en tu backend.
         const result = await obtenerPreferencia(productos);
+
+        console.log("PREFERENCIA EN SHIPINGPAYMENT:", result);
+
         //console.log("RESULT DE FORMULARIO:", result.preferenceId);
         if (result?.preferenceId) {
           setPreferenceId(result.preferenceId);
@@ -263,7 +277,7 @@ const ShippingPayment = ({ orderData }) => {
     Luego actualizo (actualizarOrden(id de la orden, payment_method, payment_status ) - orders.fetching.js), con el id de la ORDEN, los campos payment_method, payment_status de la BD.
     */
 
-    //Procesar el pago.
+    //Procesar el pago con tarjeta de credito/debito.
     try {
       const result = await procesarPago(formDataObject.formData);
       resultadoPago = result?.resultadoPago;//Guardo el resultado de procesarPago() en resultadoPago.
@@ -297,7 +311,6 @@ const ShippingPayment = ({ orderData }) => {
           //console.log("ON SUBMIT - Datos recibidos:", formDataObject);
           onSubmit(formDataObject); // Llamada a tu función onSubmit original
         }}
-
         onError={(error) => console.error("Error en el Brick:", error)}
         onReady={() => console.log("Brick listo para ser utilizado.")}
       />

@@ -24,6 +24,7 @@ import WishListEmpty from "./screens/user/WishListEmptyScreen";
 import Confirm from "./screens/user/ConfirmScreen";
 import Account from "./screens/user/AccountScreen";
 import Address from "./screens/user/AddressScreen";
+import ConfirmWalletPayment from "./screens/mpurls/ConfirmWalletPaymentScreen";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path="/confirm" element={<Confirm />} />
             <Route path="/account" element={<Account />} />
             <Route path="/account/add" element={<Address />} />
+            <Route path="/confirm-wallet-payment" element={<ConfirmWalletPayment />} />
           </Route>
 
           {/* auth screens */}

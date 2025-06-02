@@ -7,7 +7,7 @@ export const obtenerPreferencia = async (paymentData) => {
     try {
         //console.log("DATOS QUE SE ENVIAN AL BACKEND:", paymentData);
         //console.log("ENVIANDO A:", URL.URL_API + ROUTE);
-        // Enviamos los datos del pago al backend
+        // ENVIAMOS LOS DATOS DEL FRONTEND AL BACKEND PARA OBTENER EL ID DE LA PREFERENCIA.
         const result = await HTTP.POST(URL.URL_API + ROUTE, paymentData);
 
         // Si el backend devuelve un error, lanzamos una excepción
@@ -39,5 +39,19 @@ export const procesarPago = async (paymentData) => {
         return result;
     } catch (error) {
         throw { message: error.message || "ERROR AL PROCESAR EL PAGO - PAYMENTS.FETCHING.JS." };
+    }
+};
+
+/*Esta funcion, con el parametro payment_id, consulta a Mercado Pago los datos reales del pago (con seguridad, desde tu backend). De esa respuesta, obtiene el payment_status, payment_method y la external_reference que vos mismo guardaste como order_id cuando creaste la preferencia.*/
+export const consultarPago = async (payment_id) => {
+    try {
+        //const result = await HTTP.POST(`${URL.URL_API}${ROUTE}/consultar-pago`, { payment_id });
+        const result = await HTTP.GET(`${URL.URL_API}${ROUTE}/consultar-pago?payment_id=${payment_id}`); //ENVIO EL PAYMENT_ID AL BACKEND POR QUERY PARAMS.
+        if (!result) throw new Error("Sin respuesta del servidor al consultar el pago.");
+        return result;
+    } catch (error) {
+        throw {
+            message: error?.message || "ERROR AL CONSULTAR EL PAGO - payments.fetching.js.",
+        };
     }
 };

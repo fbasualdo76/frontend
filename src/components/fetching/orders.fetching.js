@@ -8,7 +8,7 @@ export const crearOrden = async (cartItems) => {
             //order_no: `#${Date.now()}`, // Genera un número de orden único basado en la fecha
             date: new Date().toISOString(), // Formato ISO de la fecha actual
             order_status: "Pending", // Estado inicial de la orden
-            payment_method: "Pending", // Método de pago fijo (puede cambiarse dinámicamente)
+            payment_method: "Pending", // FORMA DE PAGO (puede cambiarse dinámicamente)
             payment_status: "Pending", // Estado inicial del pago
             cartItems, // Enviamos los productos tal como están en el carrito
         };
