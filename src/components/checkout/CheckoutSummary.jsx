@@ -110,10 +110,10 @@ const ProductColorWrapper = styled.div`
       opacity: 0;
       cursor: pointer;
 
-      &:checked + span {
-        outline: 1px solid ${defaultTheme.color_gray};
-        outline-offset: 3px;
-      }
+      //&:checked + span {
+        //outline: 1px solid ${defaultTheme.color_gray};
+        //outline-offset: 3px;
+      //}
     }
 
     .prod-colorbox {

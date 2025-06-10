@@ -24,7 +24,7 @@ export const obtenerProductos = async () => {//obtiene todos los productos
 
 export const obtenerDetalleProducto = async (id) => {//obtiene el detalle del producto por id
     try {
-        const result = await HTTP.GET(URL.URL_API + ROUTE + '/' + id)        
+        const result = await HTTP.GET(URL.URL_API + ROUTE + '/' + id)
         if (result.status !== 200) {
             throw result//1. tira el result como un error para ser atrapado por el catch de abajo.
         }
@@ -33,6 +33,26 @@ export const obtenerDetalleProducto = async (id) => {//obtiene el detalle del pr
         throw { message: error.message }//3. vuelvo a lanzarlo solamente con el mensaje para enviarlo a la página de listar productos cuando haya un error.
     }
 }
+
+export const obtenerProductosPorCategoria = async (categoryId) => {
+    try {
+        const result = await HTTP.GET(`${URL.URL_API}/api/products/category/${categoryId}`);
+        if (!result || !result.products) {
+            throw {
+                status: 500,
+                message: result.message || "ERROR EN LA RESPUESTA DEL SERVIDOR",
+                from: "products.fetching → obtenerProductosPorCategoria"
+            };
+        }
+        return result.products;
+    } catch (error) {
+        throw {
+            status: 500,
+            message: error.message || "ERROR AL OBTENER LOS PRODUCTOS POR CATEGORIA.",
+            from: 'products.fetching → obtenerProductosPorCategoria'
+        };
+    }
+};
 
 export const registrarProducto = async (producto) => {
     try {

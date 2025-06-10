@@ -8,6 +8,8 @@ import Title from "../../components/common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 
+//PAGINA QUE MUESTRA LA LISTA DE CARDS "ProductList", ENTRE OTROS COMPONENTES.
+
 const ProductsContent = styled.div`
   grid-template-columns: 320px auto;
   margin: 20px 0;
@@ -111,7 +113,6 @@ const ProductListScreen = () => {
                 <li>
                   <Link to="/" className="text-lg font-semibold">
                     Recommended
-                    <br />PAGINA QUE MUESTRA LA LISTA DE CARDS "ProductList", ENTRE OTROS COMPONENTES.
                   </Link>
                 </li>
               </ul>

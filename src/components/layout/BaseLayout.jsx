@@ -10,7 +10,6 @@ const BaseLayout = () => {
     //PLANTILLA DEL LOGUEADO
     <PageWrapper>
       <Header />
-      <div>PLANTILLA DEL LOGUEADO</div>
       <Sidebar />
       <div
         style={{

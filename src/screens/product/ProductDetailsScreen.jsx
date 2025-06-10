@@ -14,6 +14,8 @@ import { obtenerDetalleProducto } from '../../components/fetching/products.fetch
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { validateSizeAndColor } from "../../utils/helper";
 
+//PAGINA QUE MUESTRA EL DETALLE DEL PRODUCTO "ProductPreview", ENTRE OTROS COMPONENTES.
+
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
 `;
@@ -45,7 +47,7 @@ const ProductDetailsWrapper = styled.div`
   }
 
   .prod-title {
-    margin-bottom: 10px;
+    margin-bottom: 0px;//ANTES 10px
   }
   .rating-and-comments {
     column-gap: 16px;
@@ -137,7 +139,7 @@ const ProductSizeWrapper = styled.div`
 `;
 
 const ProductColorWrapper = styled.div`
-  margin-top: 32px;
+  margin-top: 32px;  
 
   @media (max-width: ${breakpoints.sm}) {
     margin-top: 24px;
@@ -152,6 +154,7 @@ const ProductColorWrapper = styled.div`
   }
 
   .prod-colors-item {
+    margin-bottom: 16px;//ANTES NO TENIA.
     position: relative;
     width: 22px;
     height: 22px;
@@ -191,9 +194,10 @@ const ProductDetailsScreen = () => {
   const [product, setProduct] = useState(null)
   const [errorText, setErrorText] = useState('')
 
-  //ESTADOS PARA EL TALLE Y COLOR.
+  //ESTADOS PARA EL TALLE, COLOR Y NOMBRE DEL COLOR.
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedColorText, setSelectedColorText] = useState('');
 
   const navigate = useNavigate()
 
@@ -261,6 +265,7 @@ const ProductDetailsScreen = () => {
           id: product.id,
           title: product.title,
           color: selectedColor,
+          colorText: selectedColorText,
           size: selectedSize,
           price: product.price,
           quantity: 1,
@@ -290,9 +295,9 @@ const ProductDetailsScreen = () => {
             <DetailsContent className="grid">
               <ProductPreview previewImages={product.images} product={product} />
               <ProductDetailsWrapper>
-                <h2 className="prod-title">{product.title}{product.rating}</h2>
+                <h2 className="prod-title">{product.title}</h2>
 
-                <h2>PAGINA QUE MUESTRA EL DETALLE DEL PRODUCTO "ProductPreview", ENTRE OTROS COMPONENTES.</h2>
+                <span className="text-gray">{product.brand}</span>
 
                 <div className="flex items-center rating-and-comments flex-wrap">
                   <div className="prod-rating flex items-center">
@@ -346,9 +351,13 @@ const ProductDetailsScreen = () => {
                         <input
                           type="radio"
                           name="colors"
+                          title={color.name}
                           value={color.code}
-                          checked={selectedColor === color.code}
-                          onChange={(e) => setSelectedColor(e.target.value)}
+                          checked={selectedColor === color.code && selectedColorText === color.name}
+                          onChange={(e) => {
+                            setSelectedColor(e.target.value);
+                            setSelectedColorText(e.target.title);
+                          }}
                         />
                         <span
                           className="prod-colorbox"
@@ -361,6 +370,18 @@ const ProductDetailsScreen = () => {
                     ))}
                   </div>
                 </ProductColorWrapper>
+
+                {/* Categorías */}
+                {product.categories?.length > 0 && (
+                  <div style={{ fontSize: '10px' }} className="mt- text-xs text-gray">
+                    {/*<span className="font-semibold text-gray-700">Categorías: </span>*/}
+                    {product.categories.map((cat, index) => (
+                      <span key={cat.id}>
+                        {cat.name}{index < product.categories.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div className="btn-and-price flex items-center flex-wrap">
                   <BaseLinkGreen

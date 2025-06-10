@@ -97,10 +97,10 @@ const ProductColorWrapper = styled.div`
       opacity: 0;
       cursor: pointer;
 
-      &:checked + span {
-        outline: 1px solid ${defaultTheme.color_gray};
-        outline-offset: 3px;
-      }
+      //&:checked + span {
+        //outline: 1px solid ${defaultTheme.color_gray};
+       //outline-offset: 3px;
+      //}
     }
 
     .prod-colorbox {
@@ -169,18 +169,22 @@ const CartItem = ({ cartItem, setCartItems }) => {
             <h4 className="text-base">{cartItem.title}</h4>
             <p className="text-sm text-gray inline-flex">
               <span className="font-semibold">Color: </span> {/*{cartItem.color}*/}
-
               {/*ESTE WRAPPER ES COPIADO DE ProductDetailsScreen.jsx*/}
+
               <ProductColorWrapper>
                 <div className="prod-colors-list flex items-center">
                   <div className="prod-colors-item">
                     <input
                       type="radio"
                       name="color"
+                      title={cartItem.colorText}
                     />
                     <span
                       className="prod-colorbox"
-                      style={{ background: `${cartItem.color}` }}
+                      style={{
+                        background: `${cartItem.color}`,
+                        border: `${cartItem.color}`.toLowerCase() === "#ffffff" ? '1px solid #ccc' : 'none'
+                      }}
                     ></span>
                   </div>
                 </div>

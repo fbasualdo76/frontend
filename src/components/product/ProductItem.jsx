@@ -100,7 +100,6 @@ const ProductItem = ({ product }) => {
       <div className="product-img">
         <img className="object-fit-cover" src={product.images[0].imgSource} alt={product.title} />
 
-
         <button
           type="button"
           className="product-wishlist-icon flex items-center justify-center bg-white"

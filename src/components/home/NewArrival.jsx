@@ -47,7 +47,7 @@ const ArrivalSliderWrapper = styled.div`
   }
 `;
 
-const NewArrival = () => {
+const NewArrival = ({ productos }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -60,28 +60,27 @@ const NewArrival = () => {
   return (
     <Section>
       <Container>
-        <Title titleText={"New Arrival"} />
+        <Title titleText={"Novedades"} />
         <ArrivalSliderWrapper>
           <Slider
             nextArrow={<CustomNextArrow />}
             prevArrow={<CustomPrevArrow />}
             {...settings}
           >
-            {newArrivalData?.map((newArrival) => {
-              return (
-                <ProductCardBoxWrapper key={newArrival.id}>
-                  <div className="product-img">
-                    <img
-                      className="object-fit-cover"
-                      src={newArrival.imgSource}
-                    />
-                  </div>
-                  <div className="product-info">
-                    <p className="font-semibold text-xl">{newArrival.title}</p>
-                  </div>
-                </ProductCardBoxWrapper>
-              );
-            })}
+            {productos?.map((p) => (
+              <ProductCardBoxWrapper key={p.id}>
+                <div className="product-img">
+                  <img
+                    className="object-fit-cover"
+                    src={p.images?.[0]?.imgSource}
+                    alt={p.title}
+                  />
+                </div>
+                <div className="product-info">
+                  <p className="font-semibold text-xl">{p.title}</p>
+                </div>
+              </ProductCardBoxWrapper>
+            ))}
           </Slider>
         </ArrivalSliderWrapper>
       </Container>
