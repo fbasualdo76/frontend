@@ -9,12 +9,14 @@ import { limelightCatalog, mensCatalog, womensCatalog } from "../../data/data";
 import Brands from "../../components/home/Brands";
 import Feedback from "../../components/home/Feedback";
 import { obtenerProductosPorCategoria } from "../../components/fetching/products.fetching";
+import { obtenerCategorias } from "../../components/fetching/categories.fetching";
 
 const HomeScreenWrapper = styled.main``;
 
 const HomeScreen = () => {
 
   const [productosNovedades, setProductosNovedades] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -22,8 +24,12 @@ const HomeScreen = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const result = await obtenerProductosPorCategoria(20); // 20 = NOVEDADES
-        setProductosNovedades(result);
+        const [novedadesResult, categoriasResult] = await Promise.all([
+          obtenerProductosPorCategoria(20),//20 NOVEDADES
+          obtenerCategorias()
+        ]);
+        setProductosNovedades(novedadesResult);
+        setCategorias(categoriasResult);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -41,8 +47,8 @@ const HomeScreen = () => {
     <HomeScreenWrapper>
       <Hero />
       <Featured />
-       <NewArrival productos={productosNovedades} />
-      <SavingZone />
+      <SavingZone categorias={categorias} />
+      <NewArrival productos={productosNovedades} />{/*muestra productos por categoria (NOVEDADES)*/}
       <Catalog catalogTitle={"Categories For Men"} products={mensCatalog} />
       <Catalog catalogTitle={"Categories For Women"} products={womensCatalog} />
       <Brands />

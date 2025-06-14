@@ -7,8 +7,10 @@ import CustomPrevArrow from "../common/CustomPrevArrow";
 import { newArrivalData } from "../../data/data";
 import { commonCardStyles } from "../../styles/card";
 import { breakpoints } from "../../styles/themes/default";
+import { Link } from "react-router-dom";
 
-const ProductCardBoxWrapper = styled.div`
+
+const ProductCardBoxWrapper = /*styled.div`*/styled(Link)`
   ${commonCardStyles}
   .product-img {
     height: 262px;
@@ -46,6 +48,7 @@ const ArrivalSliderWrapper = styled.div`
     }
   }
 `;
+//COMPONENTE QUE MUESTRA PRODUCTOS POR CATEGORIA (NOVEDADES)
 
 const NewArrival = ({ productos }) => {
   const settings = {
@@ -68,7 +71,8 @@ const NewArrival = ({ productos }) => {
             {...settings}
           >
             {productos?.map((p) => (
-              <ProductCardBoxWrapper key={p.id}>
+
+              <ProductCardBoxWrapper key={p.id} to={`/product/details/${p.id}`}>
                 <div className="product-img">
                   <img
                     className="object-fit-cover"
@@ -76,10 +80,18 @@ const NewArrival = ({ productos }) => {
                     alt={p.title}
                   />
                 </div>
-                <div className="product-info">
+                {/*<div className="product-info">
                   <p className="font-semibold text-xl">{p.title}</p>
+                </div>*/}{/* Info general */}
+                <div className="product-info">
+                  <p className="font-bold">{p.title}</p>
+                  <div className="flex items-center justify-between text-sm font-medium">
+                    <span className="text-gray">{p.brand}</span>
+                    <span className="text-outerspace font-bold">${p.price}</span>
+                  </div>
                 </div>
               </ProductCardBoxWrapper>
+              
             ))}
           </Slider>
         </ArrivalSliderWrapper>

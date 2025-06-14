@@ -14,57 +14,71 @@ const ProductCardOverlayWrapper = styled.div`
   position: relative;
   height: 390px;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: hidden;  
 
-  @media (max-width: ${breakpoints.sm}) {
-    height: 360px;
-  }
+${({ $index }) => {//INDEX VIENE DEL .map() DEL COMPONENTE <ProductCardOverlayWrapper $index={index} />.
+    const pos = $index % 11;//REINICIA EL PATRON CADA 11 CATEGORIAS.
+    switch (pos) {
+      // 🟠 Tres medianos
+      case 0: return `grid-column: 1 / 3;`;
+      case 1: return `grid-column: 3 / 5;`;
+      case 2: return `grid-column: 5 / 7;`;
 
-  &:nth-child(1) {
-    grid-column: 1/3;
-    @media (max-width: ${breakpoints.lg}) {
-      grid-column: 1/4;
-    }
-    @media (max-width: ${breakpoints.md}) {
-      grid-column: 1/7;
-    }
-  }
+      // 🔵 Dos grandes
+      case 3: return `
+        grid-column: 1 / 4;
+        @media (max-width: ${breakpoints.lg}) {
+          grid-column: 1 / 3;
+        }
+      `;
+      case 4: return `
+        grid-column: 4 / 7;
+        @media (max-width: ${breakpoints.lg}) {
+          grid-column: 3 / 5;
+        }
+      `;
+      // 🟢 Seis chicas (una columna cada una)
+      case 5: return `
+      grid-column: 1 / 2;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 5 / 7;
+        }
+      `;
+      case 6: return `
+      grid-column: 2 / 3;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 1 / 3;
+        }      
+      `;
+      case 7: return `
+      grid-column: 3 / 4;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 3 / 5;
+        }      
+      `;
+      case 8: return `
+      grid-column: 4 / 5;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 5 / 7;
+        }
+      `;
+      case 9: return `grid-column: 5 / 6;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 1 / 4;
+        }
+      `;
+      case 10: return `grid-column: 6 / 7;
+      @media (max-width: ${breakpoints.lg}) {
+          grid-column: 4 / 7;
+        }
+      `;
 
-  &:nth-child(2) {
-    grid-column: 3/5;
-    @media (max-width: ${breakpoints.lg}) {
-      grid-column: 4/7;
+      default: return `grid-column: auto;`;
     }
-    @media (max-width: ${breakpoints.md}) {
-      grid-column: 1/7;
-    }
-  }
+  }}
 
-  &:nth-child(3) {
-    grid-column: 5/7;
-    @media (max-width: ${breakpoints.lg}) {
-      grid-column: 1/4;
-    }
-    @media (max-width: ${breakpoints.md}) {
-      grid-column: 1/7;
-    }
-  }
-
-  &:nth-child(4) {
-    grid-column: 1/4;
-    @media (max-width: ${breakpoints.lg}) {
-      grid-column: 4/7;
-    }
-    @media (max-width: ${breakpoints.md}) {
-      grid-column: 1/7;
-    }
-  }
-
-  &:nth-child(5) {
-    grid-column: 4/7;
-    @media (max-width: ${breakpoints.lg}) {
-      grid-column: 1/7;
-    }
+  @media (max-width: ${breakpoints.md}) {
+    grid-column: 1 / 7; /* 100% ancho en pantallas pequeñas */
   }
 
   &::after{
@@ -106,50 +120,61 @@ const ProductCardOverlayWrapper = styled.div`
     }
   }
 `;
+//COMPONENTE QUE MUESTRA LAS CATEGORIAS.
 
-const SavingZone = () => {
+const SavingZone = ({ categorias }) => {
   return (
     <Section>
       <Container>
-        <Title titleText={"Big Saving Zone"} />
+        <Title titleText={"Categorias"} />
         <ProductGridWrapper className="grid">
-          {savingZoneData?.map((savingZone) => {
+
+          {categorias?.map((cat, index) => {
+            /*
+            CAT ES UNA CATEGORIA INDIVIDUAL, POR EJEMPLO:, { id: 3, category_name: 'Mujer', ... }
+            INDEX ES LA POSICION NUMERICA DE LA CATEGORIA (ITEM) DENTRO DEL ARRAY (EMPIEZA EN CERO).
+            */
             return (
               <ProductCardOverlayWrapper
                 className="product-card-overlay text-white"
-                key={savingZone.id}
+                key={cat.id}
+                $index={index}
+              /*
+              $index ES UNA PROP QUE ESTAMOS ENVIANDO HomeScreen HACIA EL styled-component ProductCardOverlayWrapper.
+              Nota: Lo llamamos $index solo por convención: en styled-components, todas las props que empiezan con $ no se aplican como atributos HTML (es decir, no terminan visibles en el DOM), pero sí se pueden usar internamente en el CSS.
+              LO USAMOS PARA SABER EN QUE POSICION DEL PATRO DE 11 ESTA CADA TARJETA.
+              */
               >
                 <img
-                  src={savingZone.imgSource}
+                  /*src={savingZone.imgSource}
                   className="object-fit-cover"
-                  alt=""
+                  alt=""*/
+                  src={cat.image_url}
+                  className="object-fit-cover"
+                  alt={cat.category_name}
                 />
+
                 <div className="product-info text-end w-full h-full">
-                  {savingZone.isLimited && (
-                    <div className="info-badge text-white text-xs bg-outerspace inline-flex items-center justify-center">
-                      Limited Stock
-                    </div>
-                  )}
+                  <div className="info-badge text-white text-xs bg-outerspace inline-flex items-center justify-center">
+                    Categoría
+                  </div>
                   <h4 className="info-title font-semibold">
-                    {savingZone?.title}
+                    {cat.category_name}
                   </h4>
-                  <p className="info-text text-base">
-                    {savingZone.description}
-                  </p>
-                  <p className="discount-text text-bold text-xxl uppercase">
-                    upto {savingZone.discount}% off
-                  </p>
+                  <p className="info-text text-base">Explorá los productos</p>
                   <div className="info-arrow flex items-center justify-center text-xxl">
                     <i className="bi bi-arrow-down"></i>
                   </div>
+
                   <BaseLinkOutlineWhite
                     as={BaseLinkOutlineWhite}
-                    to="/"
+                    to={`/category/${cat.id}`}
                     className="uppercase"
                   >
-                    shop now
+                    ver productos
                   </BaseLinkOutlineWhite>
                 </div>
+
               </ProductCardOverlayWrapper>
             );
           })}

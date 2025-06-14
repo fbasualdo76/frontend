@@ -1,4 +1,3 @@
-import { CgLayoutGrid } from "react-icons/cg"
 import { HTTP, URL } from "./http"
 const ROUTE = '/api/products'
 
@@ -34,7 +33,7 @@ export const obtenerDetalleProducto = async (id) => {//obtiene el detalle del pr
     }
 }
 
-export const obtenerProductosPorCategoria = async (categoryId) => {
+export const obtenerProductosPorCategoria = async (categoryId) => {//obtiene productos por categoria
     try {
         const result = await HTTP.GET(`${URL.URL_API}/api/products/category/${categoryId}`);
         if (!result || !result.products) {
