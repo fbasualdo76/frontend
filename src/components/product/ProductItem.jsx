@@ -1,4 +1,3 @@
-import { PropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { commonCardStyles } from "../../styles/card";
@@ -84,9 +83,9 @@ const ProductColorWrapper = styled.div`//copiado de ProductDetailsScreen.jsx
   }
 `;
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ producto }) => {
   // Extraer colores únicos desde las variantes
-  const uniqueColors = product.variant?.reduce((acc, variant) => {
+  const uniqueColors = producto.variant?.reduce((acc, variant) => {
     if (!acc.find(c => c.id === variant.color.id)) {
       acc.push(variant.color);
     }
@@ -95,10 +94,11 @@ const ProductItem = ({ product }) => {
 
   return (
 
-    <ProductCardWrapper /*key={product.id} to="/product/details"*/ key={product.id} to={`/product/details/${product.id}`}>
+    <ProductCardWrapper key={producto.id} to={`/product/details/${producto.id}`}>
+
       {/* Imagen principal */}
       <div className="product-img">
-        <img className="object-fit-cover" src={product.images[0].imgSource} alt={product.title} />
+        <img className="object-fit-cover" src={producto.images[0].imgSource} alt={producto.title} />
 
         <button
           type="button"
@@ -110,10 +110,10 @@ const ProductItem = ({ product }) => {
 
       {/* Info general */}
       <div className="product-info">
-        <p className="font-bold">{product.title}</p>
+        <p className="font-bold">{producto.title}</p>
         <div className="flex items-center justify-between text-sm font-medium">
-          <span className="text-gray">{product.brand}</span>
-          <span className="text-outerspace font-bold">${product.price}</span>
+          <span className="text-gray">{producto.brand}</span>
+          <span className="text-outerspace font-bold">${producto.price}</span>
         </div>
       </div>
 
@@ -147,12 +147,12 @@ const ProductItem = ({ product }) => {
       )}
 
       {/* Categorías */}
-      {product.categories?.length > 0 && (
+      {producto.categories?.length > 0 && (
         <div style={{ fontSize: '10px' }} className="mt- text-xs text-gray">
           {/*<span className="font-semibold text-gray-700">Categorías: </span>*/}
-          {product.categories.map((cat, index) => (
+          {producto.categories.map((cat, index) => (
             <span key={cat.id}>
-              {cat.name}{index < product.categories.length - 1 ? ', ' : ''}
+              {cat.name}{index < producto.categories.length - 1 ? ', ' : ''}
             </span>
           ))}
         </div>
@@ -162,7 +162,3 @@ const ProductItem = ({ product }) => {
   );
 };
 export default ProductItem;
-
-ProductItem.propTypes = {
-  product: PropTypes.object,
-};

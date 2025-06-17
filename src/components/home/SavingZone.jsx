@@ -168,7 +168,7 @@ const SavingZone = ({ categorias }) => {
 
                   <BaseLinkOutlineWhite
                     as={BaseLinkOutlineWhite}
-                    to={`/category/${cat.id}`}
+                    to={`/products/category/${cat.id}`}
                     className="uppercase"
                   >
                     ver productos

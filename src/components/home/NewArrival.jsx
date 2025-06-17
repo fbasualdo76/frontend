@@ -9,7 +9,6 @@ import { commonCardStyles } from "../../styles/card";
 import { breakpoints } from "../../styles/themes/default";
 import { Link } from "react-router-dom";
 
-
 const ProductCardBoxWrapper = /*styled.div`*/styled(Link)`
   ${commonCardStyles}
   .product-img {

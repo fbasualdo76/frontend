@@ -35,8 +35,13 @@ function App() {
           {/* main screens */}
           <Route path="/" element={<BaseLayout />}>
             <Route index element={<Home />} />
-            <Route path="/products" element={<ProductList />} />                        
-            <Route /*path="/product/details"*/ path="/product/details/:id" element={<ProductDetails />} />
+
+            <Route path="/products" element={<ProductList />} />{/* muestra todos los productos. */}
+
+            <Route path="/product/details/:id" element={<ProductDetails />} />{/* muestra productos por id */}
+
+            <Route path="/products/category/:id" element={<ProductList />} />{/* muestra productos por categoria */}
+
             <Route path="/cart" element={<Cart />} />
             <Route path="/empty_cart" element={<CartEmpty />} />
             <Route path="/checkout" element={<Checkout />} />

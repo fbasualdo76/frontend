@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { Container, ContentStylings, Section } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
@@ -7,6 +8,8 @@ import { products } from "../../data/data";
 import Title from "../../components/common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
+import { obtenerProductos, obtenerProductosPorCategoria } from "../../components/fetching/products.fetching";
+import { useEffect, useState } from "react";
 
 //PAGINA QUE MUESTRA LA LISTA DE CARDS "ProductList", ENTRE OTROS COMPONENTES.
 
@@ -93,6 +96,34 @@ const ProductListScreen = () => {
     { label: "Home", link: "/" },
     { label: "Products", link: "" },
   ];
+
+  const { id } = useParams(); // si viene de /category/:id, existe
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const result = id
+          ? await obtenerProductosPorCategoria(id)
+          : await obtenerProductos();
+        setProductos(result);
+        setError("");
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  if (loading) return <p>Cargando productos...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <main className="page-py-spacing">
       <Container>
@@ -117,7 +148,7 @@ const ProductListScreen = () => {
                 </li>
               </ul>
             </div>
-            <ProductList products={products.slice(0, 12)} />
+            <ProductList productos={productos} />
           </ProductsContentRight>
         </ProductsContent>
       </Container>

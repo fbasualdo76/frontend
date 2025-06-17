@@ -9,7 +9,7 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductDescriptionTab from "../../components/product/ProductDescriptionTab";
 import ProductSimilar from "../../components/product/ProductSimilar";
 import ProductServices from "../../components/product/ProductServices";
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { obtenerDetalleProducto } from '../../components/fetching/products.fetching.js'
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { validateSizeAndColor } from "../../utils/helper";
@@ -212,9 +212,6 @@ const ProductDetailsScreen = () => {
     const fetchData = async () => {
       try {
         const productoObtenido = await obtenerDetalleProducto(id)
-
-        //console.log(productoObtenido)
-
         setLoading(false)
         setProduct(productoObtenido)
         setErrorText('')
@@ -222,15 +219,16 @@ const ProductDetailsScreen = () => {
         setErrorText(error.message)
       }
     }
+
     fetchData()
   }, [/*id*/])
 
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
-      className={`text-yellow ${index < Math.floor(product_one.rating)
+      className={`text-yellow ${index < Math.floor(product.rating)
         ? "bi bi-star-fill"
-        : index + 0.5 === product_one.rating
+        : index + 0.5 === product.rating
           ? "bi bi-star-half"
           : "bi bi-star"
         }`}
