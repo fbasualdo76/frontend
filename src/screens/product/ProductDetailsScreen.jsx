@@ -210,18 +210,24 @@ const ProductDetailsScreen = () => {
         --}
       --})*/
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const productoObtenido = await obtenerDetalleProducto(id)
-        setLoading(false)
-        setProduct(productoObtenido)
-        setErrorText('')
-      } catch (error) {//4. captura el error que viene el products.fetching y setea el mensaje en el estado de errorText.        
-        setErrorText(error.message)
+        const productoObtenido = await obtenerDetalleProducto(id);
+        setProduct(productoObtenido.product);
+        setErrorText('');
+      } catch (error) {
+        console.error("❌ Error al obtener producto:", error);
+        setErrorText(error.message || 'ERROR AL CARGAR EL PRODUCTO.');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [/*id*/])
+    fetchData();
+  }, [id]);
+
+  if (loading) return <p>CARGANDO PRODUCTO...</p>;
+  if (errorText) return <p>ERROR: {errorText}</p>;
 
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
@@ -284,128 +290,123 @@ const ProductDetailsScreen = () => {
   };
 
   return (
-    <>
-      {errorText && <span style={{ color: 'red' }}>{errorText}</span>}{/*si hay error lo muestra aca.*/}
-      {loading ? <h2>CARGANDO PRODUCTO...</h2> :
-        <DetailsScreenWrapper>
-          <Container>
-            <Breadcrumb items={breadcrumbItems} />
-            <DetailsContent className="grid">
-              <ProductPreview previewImages={product.images} product={product} />
-              <ProductDetailsWrapper>
-                <h2 className="prod-title">{product.title}</h2>
+    <DetailsScreenWrapper>
+      <Container>
+        <Breadcrumb items={breadcrumbItems} />
+        <DetailsContent className="grid">
+          <ProductPreview previewImages={product.images} product={product} />
+          <ProductDetailsWrapper>
+            <h2 className="prod-title">{product.title}</h2>
+            <span className="text-gray">{product.brand}</span>
+            <div className="flex items-center rating-and-comments flex-wrap">
+              <div className="prod-rating flex items-center">
 
-                <span className="text-gray">{product.brand}</span>
+                {stars}
 
-                <div className="flex items-center rating-and-comments flex-wrap">
-                  <div className="prod-rating flex items-center">
-                    {stars}
-                    <span className="text-gray text-xs">{product.rating}</span>
-                  </div>
-                  <div className="prod-comments flex items-start">
-                    <span className="prod-comment-icon text-gray">
-                      <i className="bi bi-chat-left-text"></i>
+                <span className="text-gray text-xs">{product.rating}</span>
+              </div>
+              <div className="prod-comments flex items-start">
+                <span className="prod-comment-icon text-gray">
+                  <i className="bi bi-chat-left-text"></i>
+                </span>
+                <span className="prod-comment-text text-sm text-gray">
+                  {product.comments_count} comment(s)
+                </span>
+              </div>
+            </div>
+
+            <ProductSizeWrapper>
+              <div className="prod-size-top flex items-center flex-wrap">
+                <p className="text-lg font-semibold text-outerspace">
+                  Select size
+                </p>
+                <Link to="/" className="text-lg text-gray font-medium">
+                  Size Guide &nbsp; <i className="bi bi-arrow-right"></i>
+                </Link>
+              </div>
+              <div className="prod-size-list flex items-center">
+                {product.sizes.map((size, index) => (
+                  <div className="prod-size-item" key={index}>
+                    <input
+                      type="radio"
+                      name="size"
+                      value={size}
+                      checked={selectedSize === size}
+                      onChange={(e) => setSelectedSize(e.target.value)}
+                    />
+                    <span className="flex items-center justify-center font-medium text-outerspace text-sm">
+                      {size}
                     </span>
-                    <span className="prod-comment-text text-sm text-gray">
-                      {product.comments_count} comment(s)
-                    </span>
                   </div>
-                </div>
+                ))}
+              </div>
+            </ProductSizeWrapper>
 
-                <ProductSizeWrapper>
-                  <div className="prod-size-top flex items-center flex-wrap">
-                    <p className="text-lg font-semibold text-outerspace">
-                      Select size
-                    </p>
-                    <Link to="/" className="text-lg text-gray font-medium">
-                      Size Guide &nbsp; <i className="bi bi-arrow-right"></i>
-                    </Link>
+            <ProductColorWrapper>
+              <div className="prod-colors-top flex items-center flex-wrap">
+                <p className="text-lg font-semibold text-outerspace">Colours Available</p>
+              </div>
+              <div className="prod-colors-list flex items-center">
+                {product.colors.map((color, index) => (
+                  <div className="prod-colors-item" key={index}>
+                    <input
+                      type="radio"
+                      name="colors"
+                      title={color.name}
+                      value={color.code}
+                      checked={selectedColor === color.code && selectedColorText === color.name}
+                      onChange={(e) => {
+                        setSelectedColor(e.target.value);
+                        setSelectedColorText(e.target.title);
+                      }}
+                    />
+                    <span
+                      className="prod-colorbox"
+                      style={{
+                        backgroundColor: color.code,
+                        border: color.code === '#FFFFFF' ? '1px solid #ccc' : 'none'
+                      }}
+                    ></span>
                   </div>
-                  <div className="prod-size-list flex items-center">
-                    {product.sizes.map((size, index) => (
-                      <div className="prod-size-item" key={index}>
-                        <input
-                          type="radio"
-                          name="size"
-                          value={size}
-                          checked={selectedSize === size}
-                          onChange={(e) => setSelectedSize(e.target.value)}
-                        />
-                        <span className="flex items-center justify-center font-medium text-outerspace text-sm">
-                          {size}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </ProductSizeWrapper>
+                ))}
+              </div>
+            </ProductColorWrapper>
 
-                <ProductColorWrapper>
-                  <div className="prod-colors-top flex items-center flex-wrap">
-                    <p className="text-lg font-semibold text-outerspace">Colours Available</p>
-                  </div>
-                  <div className="prod-colors-list flex items-center">
-                    {product.colors.map((color, index) => (
-                      <div className="prod-colors-item" key={index}>
-                        <input
-                          type="radio"
-                          name="colors"
-                          title={color.name}
-                          value={color.code}
-                          checked={selectedColor === color.code && selectedColorText === color.name}
-                          onChange={(e) => {
-                            setSelectedColor(e.target.value);
-                            setSelectedColorText(e.target.title);
-                          }}
-                        />
-                        <span
-                          className="prod-colorbox"
-                          style={{
-                            backgroundColor: color.code,
-                            border: color.code === '#FFFFFF' ? '1px solid #ccc' : 'none'
-                          }}
-                        ></span>
-                      </div>
-                    ))}
-                  </div>
-                </ProductColorWrapper>
-
-                {/* Categorías */}
-                {product.categories?.length > 0 && (
-                  <div style={{ fontSize: '10px' }} className="mt- text-xs text-gray">
-                    {/*<span className="font-semibold text-gray-700">Categorías: </span>*/}
-                    {product.categories.map((cat, index) => (
-                      <span key={cat.id}>
-                        {cat.name}{index < product.categories.length - 1 ? ', ' : ''}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="btn-and-price flex items-center flex-wrap">
-                  <BaseLinkGreen
-                    //to="/cart"
-                    as={BaseLinkGreen}
-                    className="prod-add-btn"
-                    onClick={agregarAlCarrito}
-                  >
-                    <span className="prod-add-btn-icon">
-                      <i className="bi bi-cart2"></i>
-                    </span>
-                    <span className="prod-add-btn-text">Add to cart</span>
-                  </BaseLinkGreen>
-                  <span className="prod-price text-xl font-bold text-outerspace">
-                    {currencyFormat(product.price)}
+            {/* Categorías */}
+            {product.categories?.length > 0 && (
+              <div style={{ fontSize: '10px' }} className="mt- text-xs text-gray">
+                {/*<span className="font-semibold text-gray-700">Categorías: </span>*/}
+                {product.categories.map((cat, index) => (
+                  <span key={cat.id}>
+                    {cat.name}{index < product.categories.length - 1 ? ', ' : ''}
                   </span>
-                </div>
-                <ProductServices />
-              </ProductDetailsWrapper>
-            </DetailsContent>
-            <ProductDescriptionTab />
-            <ProductSimilar />
-          </Container>
-        </DetailsScreenWrapper>
-      }
-    </>
+                ))}
+              </div>
+            )}
+
+            <div className="btn-and-price flex items-center flex-wrap">
+              <BaseLinkGreen
+                //to="/cart"
+                as={BaseLinkGreen}
+                className="prod-add-btn"
+                onClick={agregarAlCarrito}
+              >
+                <span className="prod-add-btn-icon">
+                  <i className="bi bi-cart2"></i>
+                </span>
+                <span className="prod-add-btn-text">Add to cart</span>
+              </BaseLinkGreen>
+              <span className="prod-price text-xl font-bold text-outerspace">
+                {currencyFormat(product.price)}
+              </span>
+            </div>
+            <ProductServices />
+          </ProductDetailsWrapper>
+        </DetailsContent>
+        <ProductDescriptionTab />
+        <ProductSimilar />
+      </Container>
+    </DetailsScreenWrapper>
   );
 };
 export default ProductDetailsScreen;

@@ -47,7 +47,7 @@ const HomeScreen = () => {
     <HomeScreenWrapper>
       <Hero />
       <Featured />
-      <SavingZone categorias={categorias} />
+      <SavingZone categorias={categorias} />{/*muestra categorias*/}
       <NewArrival productos={productosNovedades} />{/*muestra productos por categoria (NOVEDADES)*/}
       <Catalog catalogTitle={"Categories For Men"} products={mensCatalog} />
       <Catalog catalogTitle={"Categories For Women"} products={womensCatalog} />
