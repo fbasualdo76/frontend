@@ -8,6 +8,7 @@ import { newArrivalData } from "../../data/data";
 import { commonCardStyles } from "../../styles/card";
 import { breakpoints } from "../../styles/themes/default";
 import { Link } from "react-router-dom";
+import ProductItem from "../product/ProductItem";
 
 const ProductCardBoxWrapper = /*styled.div`*/styled(Link)`
   ${commonCardStyles}
@@ -49,7 +50,7 @@ const ArrivalSliderWrapper = styled.div`
 `;
 //COMPONENTE QUE MUESTRA PRODUCTOS POR CATEGORIA (NOVEDADES)
 
-const NewArrival = ({ productos }) => {
+const NewArrival = ({ newArrivalTitle, productos }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -58,44 +59,46 @@ const NewArrival = ({ productos }) => {
     centerMode: true,
     variableWidth: true,
   };
-
   return (
     <Section>
       <Container>
-        <Title titleText={"Novedades"} />
+        <Title titleText={newArrivalTitle} />
         <ArrivalSliderWrapper>
           <Slider
             nextArrow={<CustomNextArrow />}
             prevArrow={<CustomPrevArrow />}
             {...settings}
           >
-            {productos?.map((p) => (
-
-              <ProductCardBoxWrapper key={p.id} to={`/product/details/${p.id}`}>
+            {productos?.map((producto) => (
+              /*<ProductCardBoxWrapper key={p.id} to={`/product/details/${p.id}`}>
                 <div className="product-img">
                   <img
                     className="object-fit-cover"
                     src={p.images?.[0]?.imgSource}
                     alt={p.title}
                   />
+                </div>*/
+              /*<div className="product-info">
+                <p className="font-semibold text-xl">{p.title}</p>
+              </div>*/
+              /* Info general */
+              /*<div className="product-info">
+                <p className="font-bold">{p.title}</p>
+                <div className="flex items-center justify-between text-sm font-medium">
+                  <span className="text-gray">{p.brand}</span>
+                  <span className="text-outerspace font-bold">${p.price}</span>
                 </div>
-                {/*<div className="product-info">
-                  <p className="font-semibold text-xl">{p.title}</p>
-                </div>*/}{/* Info general */}
-                <div className="product-info">
-                  <p className="font-bold">{p.title}</p>
-                  <div className="flex items-center justify-between text-sm font-medium">
-                    <span className="text-gray">{p.brand}</span>
-                    <span className="text-outerspace font-bold">${p.price}</span>
-                  </div>
-                </div>
+              </div>
+            </ProductCardBoxWrapper>*/
+
+              <ProductCardBoxWrapper key={producto.id} to={`/product/details/${producto.id}`}>
+                <ProductItem producto={producto} />
               </ProductCardBoxWrapper>
-              
             ))}
           </Slider>
         </ArrivalSliderWrapper>
       </Container>
-    </Section>
+    </Section >
   );
 };
 

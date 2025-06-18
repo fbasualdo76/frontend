@@ -15,6 +15,8 @@ const HomeScreenWrapper = styled.main``;
 
 const HomeScreen = () => {
 
+  const [productosConDescuento, setProductosConDescuento] = useState([]);
+  const [productosMasVendidos, setProductosMasVendidos] = useState([]);
   const [productosNovedades, setProductosNovedades] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,10 +26,14 @@ const HomeScreen = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [novedadesResult, categoriasResult] = await Promise.all([
+        const [conDescuentoResult, masVendidosResult, novedadesResult, categoriasResult] = await Promise.all([
+          obtenerProductosPorCategoria(22),//22 CON DESCUENTO
+          obtenerProductosPorCategoria(21),//21 MAS VENDIDOS
           obtenerProductosPorCategoria(20),//20 NOVEDADES
           obtenerCategorias()
         ]);
+        setProductosConDescuento(conDescuentoResult);
+        setProductosMasVendidos(masVendidosResult);
         setProductosNovedades(novedadesResult);
         setCategorias(categoriasResult);
       } catch (err) {
@@ -40,19 +46,25 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <p>CARGANDO...</p>;
+  if (error) return <p>ERROR: {error}</p>;
 
   return (
     <HomeScreenWrapper>
       <Hero />
       <Featured />
-      <SavingZone categorias={categorias} />{/*muestra categorias*/}
-      <NewArrival productos={productosNovedades} />{/*muestra productos por categoria (NOVEDADES)*/}
-      <Catalog catalogTitle={"Categories For Men"} products={mensCatalog} />
-      <Catalog catalogTitle={"Categories For Women"} products={womensCatalog} />
+
+      <NewArrival newArrivalTitle={"Novedades"} productos={productosNovedades} />{/*muestra productos por categoria (NOVEDADES) ---SLIDER---*/}
+
+      <NewArrival newArrivalTitle={"Mas vendidos"} productos={productosMasVendidos} />{/*muestra productos por categoria (MAS VENDIDOS) ---SLIDER---*/}
+
+      <SavingZone savingZoneTitle={"Categorias"} categorias={categorias} />{/*muestra categorias*/}
+
+      <NewArrival newArrivalTitle={"Con decuento"} productos={productosConDescuento} />{/*muestra productos por categoria (CON DESCUENTO) ---SLIDER---*/}
+
+      {/*<Catalog catalogTitle={"Productos mas vendidos"} productos={productosMasVendidos} />*/}{/*muestra productos por categoria (MAS VENDIDOS)*/}
+      
       <Brands />
-      <Catalog catalogTitle={"In The LimeLight"} products={limelightCatalog} />
       <Feedback />
     </HomeScreenWrapper>
   );

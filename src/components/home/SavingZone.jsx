@@ -122,11 +122,11 @@ ${({ $index }) => {//INDEX VIENE DEL .map() DEL COMPONENTE <ProductCardOverlayWr
 `;
 //COMPONENTE QUE MUESTRA LAS CATEGORIAS.
 
-const SavingZone = ({ categorias }) => {
+const SavingZone = ({ savingZoneTitle, categorias }) => {
   return (
     <Section>
       <Container>
-        <Title titleText={"Categorias"} />
+        <Title titleText={savingZoneTitle} />
         <ProductGridWrapper className="grid">
 
           {categorias?.map((cat, index) => {
