@@ -14,6 +14,9 @@ const ProductListWrapper = styled.div`
   }
 `;
 const ProductList = ({ productos }) => {
+
+  //console.log(productos);
+  
   return (
     <ProductListWrapper className="grid">
       {productos?.map((producto) => {

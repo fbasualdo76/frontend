@@ -298,11 +298,10 @@ const ProductDetailsScreen = () => {
           <ProductDetailsWrapper>
             <h2 className="prod-title">{product.title}</h2>
             <span className="text-gray">{product.brand}</span>
+            
             <div className="flex items-center rating-and-comments flex-wrap">
               <div className="prod-rating flex items-center">
-
                 {stars}
-
                 <span className="text-gray text-xs">{product.rating}</span>
               </div>
               <div className="prod-comments flex items-start">

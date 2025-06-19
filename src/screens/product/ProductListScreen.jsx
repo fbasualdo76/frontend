@@ -121,8 +121,8 @@ const ProductListScreen = () => {
     fetchData();
   }, [id]);
 
-  if (loading) return <p>Cargando productos...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <p>CARGANDO PRODUCTOS...</p>;
+  if (error) return <p>ERROR: {error}</p>;
 
   return (
     <main className="page-py-spacing">

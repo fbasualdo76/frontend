@@ -70,6 +70,7 @@ const NewArrival = ({ newArrivalTitle, productos }) => {
             {...settings}
           >
             {productos?.map((producto) => (
+              
               /*<ProductCardBoxWrapper key={p.id} to={`/product/details/${p.id}`}>
                 <div className="product-img">
                   <img
